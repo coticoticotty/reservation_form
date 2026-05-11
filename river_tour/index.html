@@ -150,14 +150,20 @@
 
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script>
+  const GAS_API_URL = "https://script.google.com/a/macros/hitotowa.info/s/AKfycbyI7AP9F25uhMW-Ecjv_ZgKA_CjV51EeZ5_jtujgKm42PWLB8d45yM3A7j2GSx1h3G5/exec";
   let tourData = [];
 
   window.onload = function() {
     // 1. ツアー一覧の取得（既存処理）
-    google.script.run.withSuccessHandler(function(options) {
+  fetch(GAS_API_URL + "?action=getAvailableTours")
+    .then(res => res.json())
+    .then(options => {
       tourData = options;
+
       const select = document.getElementById('tourSelect');
+
       select.innerHTML = '<option value="">ツアーを選択してください</option>';
+
       options.forEach(opt => {
         const el = document.createElement('option');
         el.value = opt.value;
@@ -165,17 +171,26 @@
         el.disabled = opt.disabled;
         select.appendChild(el);
       });
-    }).getAvailableTours();
+    })
+    .catch(err => {
+      console.error(err);
+      alert("ツアー一覧の取得に失敗しました");
+    });
     
     generateParticipantFields(1);
 
     // 2. LIFFの初期化
     // "YOUR_LIFF_ID" は LINE Developers で発行したものに書き換えてください
-    liff.init({ liffId: "YOUR_LIFF_ID" }).then(() => {
+    liff.init({ liffId: "2010045353-fQ7AOUJA" }).then(() => {
       // 【成功時】
       alert("LIFF初期化成功！"); // これが出ればIDとSDKはOK
 
       if (liff.isInClient()) {
+        if (!liff.isLoggedIn()) {
+          liff.login();
+          return;
+        }
+        
         // LINEアプリ内から開かれた場合
         liff.getProfile().then(profile => {
           document.getElementById('lineUserId').value = profile.userId;
@@ -259,15 +274,33 @@
       participants: participants
     };
 
-    google.script.run
-      .withSuccessHandler(onSuccess)
-      .withFailureHandler(err => { 
-        alert("送信に失敗しました。時間をおいて再度お試しください。"); 
-        console.error(err.message);
-        btn.disabled = false; 
-        btn.innerText = "予約を確定する"; 
-      })
-      .processForm(formData);
+  fetch(GAS_API_URL + "?action=reserve", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(formData)
+  })
+  .then(res => res.json())
+  .then(data => {
+
+    if (data.success) {
+      onSuccess();
+    } else {
+      throw new Error(data.message || "送信失敗");
+    }
+
+  })
+  .catch(err => {
+
+    alert("送信に失敗しました。時間をおいて再度お試しください。");
+
+    console.error(err);
+
+    btn.disabled = false;
+    btn.innerText = "予約を確定する";
+
+    });
   };
 
   function onSuccess() {
