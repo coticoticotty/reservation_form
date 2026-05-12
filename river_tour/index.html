@@ -294,46 +294,37 @@
       });
     });
 
-    // 修正箇所：bookingTool と lineUserId を含める
+    // 予約データをまとめる
     const formData = {
-      action: "reserve",
+      action: "reserve", // アクションをここに入れる
       repName: this.repName.value.trim().substring(0, 50),
-      repEmail: this.repEmail.value.trim(),
+      repEmail: this.repEmailField.value ? this.repEmailField.value.trim() : "",
       repPhone: this.repPhone.value.trim().replace(/[^0-9-]/g, ''),
       tourDate: this.tourDate.value,
       tourName: this.tourName.value,
       paymentMethod: this.paymentMethod.value,
-      bookingTool: document.getElementById('bookingTool').value, // 追加
-      lineUserId: document.getElementById('lineUserId').value,   // 追加
+      bookingTool: document.getElementById('bookingTool').value,
+      lineUserId: document.getElementById('lineUserId').value,
       participants: participants
     };
 
-  fetch(GAS_API_URL, {
-    method: "POST",
-    body: new URLSearchParams({
-      action: "reserve",
-      data: JSON.stringify(formData)
+    // fetchの修正
+    fetch(GAS_API_URL, {
+      method: "POST",
+      mode: "no-cors", // CORSプリフライトを回避
+      cache: "no-cache",
+      // headersは指定しない（no-corsの場合はtext/plain扱いになるため）
+      body: JSON.stringify(formData)
     })
-  })
-  .then(res => res.json())
-  .then(data => {
-
-    if (data.success) {
+    .then(() => {
+      // no-cors の場合レスポンスは読めないが、ここに来れば送信自体は成功している
       onSuccess();
-    } else {
-      throw new Error(data.message || "送信失敗");
-    }
-
-  })
-  .catch(err => {
-
-    alert("送信に失敗しました。時間をおいて再度お試しください。");
-
-    console.error(err);
-
-    btn.disabled = false;
-    btn.innerText = "予約を確定する";
-
+    })
+    .catch(err => {
+      console.error("Fetch Error:", err);
+      alert("送信に失敗しました。電波の良い場所で再度お試しください。");
+      btn.disabled = false;
+      btn.innerText = "予約を確定する";
     });
   };
 
