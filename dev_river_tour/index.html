@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f7f6;
+    }
+    .container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 16px;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    .input-group { margin-bottom: 15px; }
+    label { font-weight: bold; display: block; margin-bottom: 5px; }
+    input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;}
+    input,
+    select,
+    button {
+      font-size: 16px;
+    }
+    .participant-card { border: 1px solid #eee; padding: 10px; margin-bottom: 10px; background: #fafafa; }
+    .submit-btn { background: #4CAF50; color: white; padding: 15px; border: none; width: 100%; font-size: 18px; cursor: pointer; border-radius: 4px; }
+    .submit-btn:disabled { background: #ccc; }
+    
+    /* 支払い方法（ラジオボタン）のスタイル調整 */
+    .payment-group { margin-bottom: 20px; padding: 10px; border: 1px dashed #ccc; border-radius: 4px; }
+    .form-check { display: flex; align-items: center; margin-bottom: 8px; cursor: pointer; }
+    .form-check input { width: auto; margin-right: 10px; cursor: pointer; }
+    .form-check label { margin-bottom: 0; cursor: pointer; font-weight: normal; }
+
+    .hp-field { display: none !important; visibility: hidden !important; }
+
+    .policy-box { 
+      background: #fff9f0; 
+      border: 1px solid #ffcc80; 
+      padding: 15px; 
+      border-radius: 4px; 
+      font-size: 0.9em; 
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .policy-box h3 { margin-top: 0; color: #e67e22; font-size: 1.1em; }
+    .policy-section { margin-bottom: 12px; }
+    .policy-title { font-weight: bold; color: #333; text-decoration: underline; }
+    .ack-group { text-align: center; background: #eee; padding: 10px; border-radius: 4px; }
+    .ack-group label { display: inline-block; cursor: pointer; }
+    .ack-group input { width: auto; margin-right: 8px; }
+
+    #success-message { display: none; text-align: center; padding: 40px 10px; }
+    #success-message h2 { color: #4CAF50; }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 12px;
+      }
+      .participant-card {
+        padding: 12px;
+      }
+      .submit-btn {
+        font-size: 18px;
+        padding: 16px;
+      }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  
+  <div id="form-wrapper">
+    <h2>川遊びツアー 予約フォーム</h2>
+    <form id="resForm">
+      
+      <div class="hp-field">
+        <label>ご職業（入力しないでください）</label>
+        <input type="text" name="hp_job_field" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="input-group">
+        <label>代表者氏名</label>
+        <input type="text" name="repName" maxlength="50" required>
+      </div>
+      <div class="input-group" id="email-section">
+        <label>メールアドレス</label>
+        <input type="email" name="repEmail" id="repEmailField" required>
+      </div>
+
+      <input type="hidden" name="lineUserId" id="lineUserId">
+      <input type="hidden" name="bookingTool" id="bookingTool" value="Webフォーム">
+      <div class="input-group">
+        <label>電話番号</label>
+        <input type="tel" name="repPhone" pattern="^[0-9\-]+$" title="数字とハイフンのみ入力可能です" required>
+      </div>
+
+      <div class="input-group">
+        <label>参加希望日</label>
+        <select id="tourSelect" name="tourId" required onchange="updateTourInfo()">
+          <option value="">読み込み中...</option>
+        </select>
+        <input type="hidden" id="tourName" name="tourName">
+        <input type="hidden" id="tourDate" name="tourDate">
+      </div>
+
+      <div class="payment-group">
+        <label>お支払い方法</label>
+        <div class="form-check">
+          <input type="radio" name="paymentMethod" id="credit" value="クレジットカード" checked>
+          <label for="credit">クレジットカード決済</label>
+        </div>
+        <div class="form-check">
+          <input type="radio" name="paymentMethod" id="bank" value="銀行振込">
+          <label for="bank">銀行振込</label>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>参加人数 (1〜4名)</label>
+        <select name="count" onchange="generateParticipantFields(this.value)">
+          <option value="1">1名</option>
+          <option value="2">2名</option>
+          <option value="3">3名</option>
+          <option value="4">4名</option>
+        </select>
+      </div>
+
+      <div id="participantContainer"></div>
+
+      <div class="policy-box">
+        <h3>確認事項</h3>
+        <div class="policy-section">
+          <span class="policy-title">川遊びのリスクについて</span><br>
+          川は整備されていない道のため、転倒やケガのリスクがあります。
+        </div>
+        <div class="policy-section">
+          <span class="policy-title">ツアーの参加条件</span><br>
+          体調の悪い方、飲酒をしている方、妊娠中の方、ガイドの指示に従って頂けない方のご参加は不可となり、このような場合ツアー参加料金の返却は一切ございません。
+        </div>
+        <div class="policy-section">
+          <span class="policy-title">ツアーの実施可否について</span><br>
+          天候や川のコンディションにより、実施が難しい場合、前日の18時を目安に連絡をいたします。荒天中止。少々の雨の場合は開催します。現地に来てから中止となった場合、旅費などの賠償には応じかねますのでご了承ください。
+        </div>
+        <div class="policy-section">
+          <span class="policy-title">キャンセル料について</span><br>
+          3日前～前日：50％ / 当日・無連絡：100％ / それ以前：無料<br>
+          ※主催者判断の中止は全額返金いたします。
+        </div>
+        <div class="policy-section">
+          <span class="policy-title">動画の撮影について</span><br>
+          ツアー中の様子をカメラで撮影し、SNS等にて公開します。顔出しが難しい場合は主催者にお伝えください。
+        </div>
+
+        <div class="ack-group">
+          <label>
+            <input type="radio" name="ack" value="はい" required> 
+            内容を確認し、全てに同意します「はい」
+          </label>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">予約を確定する</button>
+    </form>
+  </div>
+
+  <div id="success-message">
+    <h2>お申し込みありがとうございます。</h2>
+    <p>予約確認メールをお送りしました。</p>
+    <p>メールが届いていない場合は迷惑メールフォルダを確認した後、お手数ですが以下のアドレスまでご連絡ください。</p>    
+    <p>kohei.okamoto@hitotowa.info</p>
+  </div>
+
+</div>
+
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script>
+  const GAS_API_URL = "https://script.google.com/macros/s/AKfycbybpSwSnx1e2sy89IQpjwV2Ye99cXXSqg6kGMAZ21joBcpj7FC2Ujif5QhbDXVeewsB/exec";
+  let tourData = [];
+
+  window.onload = function() {
+    // 1. ツアー一覧の取得（既存処理）
+  fetch(GAS_API_URL + "?action=getAvailableTours")
+    .then(res => res.json())
+    .then(options => {
+      tourData = options;
+
+      const select = document.getElementById('tourSelect');
+
+      select.innerHTML = '<option value="">ツアーを選択してください</option>';
+
+      options.forEach(opt => {
+        const el = document.createElement('option');
+        el.value = opt.value;
+        el.textContent = opt.label;
+        el.disabled = opt.disabled;
+        select.appendChild(el);
+      });
+    })
+    .catch(err => {
+      console.error(err);
+      alert("ツアー一覧の取得に失敗しました");
+    });
+    
+    generateParticipantFields(1);
+
+    // 2. LIFFの初期化
+    // "YOUR_LIFF_ID" は LINE Developers で発行したものに書き換えてください
+    liff.init({ liffId: "2010045353-fQ7AOUJA" }).then(() => {
+
+      if (liff.isInClient()) {
+        if (!liff.isLoggedIn()) {
+          liff.login();
+          return;
+        }
+        
+        // LINEアプリ内から開かれた場合
+        liff.getProfile().then(profile => {
+          document.getElementById('lineUserId').value = profile.userId;
+          document.getElementById('bookingTool').value = "LINE";
+          
+          // メール入力欄を隠し、必須を解除
+          document.getElementById('email-section').style.display = 'none';
+          document.getElementById('repEmailField').required = false;
+        });
+      } else {
+        // 通常のブラウザ（Webフォーム）の場合
+        document.getElementById('bookingTool').value = "Webフォーム";
+      }
+    }).catch((err) => {
+      console.error("LIFF Initialization failed", err);
+    });
+  };
+
+  // --- 以下の関数は既存のまま ---
+  function updateTourInfo() {
+    const select = document.getElementById('tourSelect');
+    const selected = tourData.find(t => t.value === select.value);
+    if (selected) {
+      document.getElementById('tourName').value = selected.tourName;
+      document.getElementById('tourDate').value = selected.date;
+    }
+  }
+
+  function generateParticipantFields(num) {
+    const container = document.getElementById('participantContainer');
+    container.innerHTML = '<h3>参加者情報</h3>';
+    for (let i = 1; i <= num; i++) {
+      container.innerHTML += `
+        <div class="participant-card">
+          <label>${i}人目の氏名</label>
+          <input type="text" class="p-name" maxlength="50" required>
+            <div style="margin-top:10px;">
+              <label>身長(cm)</label>
+              <input type="number" class="p-height" min="50" max="250" required>
+            </div>
+
+            <div style="margin-top:10px;">
+              <label>靴サイズ(cm)</label>
+              <input type="number" class="p-shoe" min="10" max="40" step="0.5" required>
+            </div>
+          </div>`;
+    }
+  }
+
+  // --- 送信処理の修正 ---
+  document.getElementById('resForm').onsubmit = function(e) {
+    e.preventDefault();
+    
+    if (this.hp_job_field.value !== "") {
+      console.warn("Spam detected.");
+      return false; 
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerText = "送信中...";
+
+    const participants = [];
+    const names = document.querySelectorAll('.p-name');
+    const heights = document.querySelectorAll('.p-height');
+    const shoes = document.querySelectorAll('.p-shoe');
+    
+    names.forEach((n, i) => {
+      participants.push({ 
+        name: n.value.trim().substring(0, 50),
+        height: Number(heights[i].value),
+        shoe: Number(shoes[i].value) 
+      });
+    });
+
+    // 予約データをまとめる
+    const formData = {
+      action: "reserve", // アクションをここに入れる
+      repName: this.repName.value.trim().substring(0, 50),
+      repEmail: this.repEmailField.value ? this.repEmailField.value.trim() : "",
+      repPhone: this.repPhone.value.trim().replace(/[^0-9-]/g, ''),
+      tourDate: this.tourDate.value,
+      tourName: this.tourName.value,
+      paymentMethod: this.paymentMethod.value,
+      bookingTool: document.getElementById('bookingTool').value,
+      lineUserId: document.getElementById('lineUserId').value,
+      participants: participants
+    };
+
+    // fetchの修正
+    fetch(GAS_API_URL, {
+      method: "POST",
+      mode: "no-cors", // CORSプリフライトを回避
+      cache: "no-cache",
+      // headersは指定しない（no-corsの場合はtext/plain扱いになるため）
+      body: JSON.stringify(formData)
+    })
+    .then(() => {
+      // no-cors の場合レスポンスは読めないが、ここに来れば送信自体は成功している
+      onSuccess();
+    })
+    .catch(err => {
+      console.error("Fetch Error:", err);
+      alert("送信に失敗しました。電波の良い場所で再度お試しください。");
+      btn.disabled = false;
+      btn.innerText = "予約を確定する";
+    });
+  };
+
+  function onSuccess() {
+    // LINEアプリ内で開いているか判定
+  if (liff.isInClient()) {
+    const btn = document.getElementById('submitBtn');
+    btn.innerText = "送信完了！"; // ボタンの文字を変えて達成感を出す
+    
+    setTimeout(() => {
+      liff.closeWindow();
+    }, 1500); // 1秒だけ余韻を残して閉じる
+    } else {
+      // --- 通常ブラウザ（Web）の場合：既存の通り御礼ページを表示 ---
+      document.getElementById('form-wrapper').style.display = 'none';
+      document.getElementById('success-message').style.display = 'block';
+      window.scrollTo(0, 0);
+    }
+  }
+</script>
+</body>
+</html>
