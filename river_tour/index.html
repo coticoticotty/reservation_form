@@ -338,13 +338,19 @@
   };
 
   function onSuccess() {
-    document.getElementById('form-wrapper').style.display = 'none';
-    document.getElementById('success-message').style.display = 'block';
-    window.scrollTo(0, 0);
+    // LINEアプリ内で開いているか判定
+  if (liff.isInClient()) {
+    const btn = document.getElementById('submitBtn');
+    btn.innerText = "送信完了！"; // ボタンの文字を変えて達成感を出す
     
-    // LINEアプリ内なら、3秒後に自動で閉じる
-    if (liff.isInClient()) {
-      setTimeout(() => { liff.closeWindow(); }, 3000);
+    setTimeout(() => {
+      liff.closeWindow();
+    }, 1500); // 1秒だけ余韻を残して閉じる
+    } else {
+      // --- 通常ブラウザ（Web）の場合：既存の通り御礼ページを表示 ---
+      document.getElementById('form-wrapper').style.display = 'none';
+      document.getElementById('success-message').style.display = 'block';
+      window.scrollTo(0, 0);
     }
   }
 </script>
