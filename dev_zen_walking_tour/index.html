@@ -258,14 +258,10 @@
 
     const participants = [];
     const names = document.querySelectorAll('.p-name');
-    const heights = document.querySelectorAll('.p-height');
-    const shoes = document.querySelectorAll('.p-shoe');
     
     names.forEach((n, i) => {
       participants.push({ 
         name: n.value.trim().substring(0, 50),
-        height: Number(heights[i].value),
-        shoe: Number(shoes[i].value) 
       });
     });
 
