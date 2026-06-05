@@ -102,6 +102,7 @@
         </select>
         <input type="hidden" id="tourName" name="tourName">
         <input type="hidden" id="tourDate" name="tourDate">
+        <input type="hidden" id="tourPrice" name="tourPrice">
       </div>
       <div class="input-group">
         <label>Number of Participants(1 to 6 people)
@@ -111,8 +112,8 @@
           <option value="2">2</option>
           <option value="3">3</option>
           <option value="4">4</option>
-          <option value="4">5</option>
-          <option value="4">6</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
         </select>
       </div>
 
@@ -227,7 +228,8 @@
     const selected = tourData.find(t => t.value === select.value);
     if (selected) {
       document.getElementById('tourName').value = selected.tourName;
-      document.getElementById('tourDate').value = selected.date;
+      document.getElementById('tourDate').value = selected.systemDate;
+      document.getElementById('tourPrice').value = selected.tourPrice;
     }
   }
 
@@ -272,6 +274,7 @@
       repEmail: this.repEmailField.value ? this.repEmailField.value.trim() : "",
       tourDate: this.tourDate.value,
       tourName: this.tourName.value,
+      tourPrice: this.tourPrice.value,
       lineUserId: document.getElementById('lineUserId').value,
       participants: participants
     };
