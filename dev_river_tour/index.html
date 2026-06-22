@@ -227,43 +227,25 @@
   const GAS_API_URL = "https://script.google.com/macros/s/AKfycbybpSwSnx1e2sy89IQpjwV2Ye99cXXSqg6kGMAZ21joBcpj7FC2Ujif5QhbDXVeewsB/exec";
   let tourData = [];
 
-  window.onload = function() {
-    // 1. ツアー一覧の取得（既存処理）
-  fetch(GAS_API_URL + "?action=getAvailableTours")
-    .then(res => res.json())
-    .then(options => {
-      tourData = options;
-
-      const select = document.getElementById('tourSelect');
-
-      select.innerHTML = '<option value="">ツアーを選択してください</option>';
-
-      options.forEach(opt => {
-        const el = document.createElement('option');
-        el.value = opt.value;
-        el.textContent = opt.label;
-        el.disabled = opt.disabled;
-        select.appendChild(el);
-      });
-    })
-    .catch(err => {
-      console.error(err);
-      alert("ツアー一覧の取得に失敗しました");
-    });
-    
+window.onload = function() {
+    // 参加者フィールドの初期生成
     generateParticipantFields(1);
 
-    // 2. LIFFの初期化
-    // "YOUR_LIFF_ID" は LINE Developers で発行したものに書き換えてください
+    // LIFFの初期化
     liff.init({ liffId: "2010045353-fQ7AOUJA" }).then(() => {
+      // LINEアプリ内から開かれているかどうかの判定を取得
+      const isInLine = liff.isInClient();
+      
+      // ツアー一覧の取得・描画関数を呼び出す（LINE内かどうかの判定を渡す）
+      loadTours(isInLine);
 
-      if (liff.isInClient()) {
+      if (isInLine) {
         if (!liff.isLoggedIn()) {
           liff.login();
           return;
         }
         
-        // LINEアプリ内から開かれた場合
+        // LINEアプリ内から開かれた場合の処理
         liff.getProfile().then(profile => {
           document.getElementById('lineUserId').value = profile.userId;
           document.getElementById('bookingTool').value = "LINE";
@@ -278,8 +260,39 @@
       }
     }).catch((err) => {
       console.error("LIFF Initialization failed", err);
+      // LIFFの初期化に失敗した場合は、通常のWebフォーム（LINE外）としてツアーを取得
+      loadTours(false);
     });
   };
+
+  // --- 追加：ツアー一覧を取得してセレクトボックスを生成する関数 ---
+  function loadTours(isInLine) {
+    fetch(GAS_API_URL + "?action=getAvailableTours")
+      .then(res => res.json())
+      .then(options => {
+        tourData = options;
+
+        const select = document.getElementById('tourSelect');
+        select.innerHTML = '<option value="">ツアーを選択してください</option>';
+
+        options.forEach(opt => {
+          // 【ここが肝】通常のブラウザ（LINE外）かつ LINE限定ツアーの場合はスキップ（非表示）
+          if (!isInLine && opt.isLineOnly) {
+            return;
+          }
+
+          const el = document.createElement('option');
+          el.value = opt.value;
+          el.textContent = opt.label;
+          el.disabled = opt.disabled;
+          select.appendChild(el);
+        });
+      })
+      .catch(err => {
+        console.error(err);
+        alert("ツアー一覧の取得に失敗しました");
+      });
+  }
 
   // --- 以下の関数は既存のまま ---
   function updateTourInfo() {
