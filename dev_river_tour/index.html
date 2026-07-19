@@ -1,66 +1,221 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
   <base target="_top">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap">
   <style>
+    :root {
+      --cream: #fcfbf9;
+      --charcoal: #2c2c2c;
+      --turquoise: #20b2aa;
+      --turquoise-light: #3fc7bf;
+      --turquoise-soft: #e6f5f3;
+      --mist: #e8f4f8;
+    }
+    * { box-sizing: border-box; }
     body {
-      font-family: sans-serif;
+      font-family: 'Noto Sans JP', sans-serif;
       margin: 0;
       padding: 0;
-      background: #f4f7f6;
+      background: var(--cream);
+      color: var(--charcoal);
     }
     .container {
       width: 100%;
       max-width: 600px;
       margin: 0 auto;
-      background: white;
-      padding: 16px;
+      background: var(--cream);
+      padding: 24px 20px 40px;
       border-radius: 0;
       box-shadow: none;
     }
-    .input-group { margin-bottom: 15px; }
-    label { font-weight: bold; display: block; margin-bottom: 5px; }
-    input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;}
+    h2 {
+      font-family: 'Noto Serif JP', serif;
+      font-weight: 500;
+      font-size: 1.3em;
+      color: var(--charcoal);
+      letter-spacing: 0.04em;
+      margin: 8px 0 28px;
+      text-align: center;
+    }
+    h3 {
+      font-family: 'Noto Serif JP', serif;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+    }
+    .input-group { margin-bottom: 20px; }
+    label { font-weight: 500; display: block; margin-bottom: 6px; color: #4a4a4a; font-size: 0.92em; }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #dbe2df;
+      border-radius: 8px;
+      box-sizing: border-box;
+      background: #fff;
+      color: var(--charcoal);
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--turquoise);
+      box-shadow: 0 0 0 3px rgba(32,178,170,0.15);
+    }
     input,
     select,
     button {
       font-size: 16px;
+      font-family: 'Noto Sans JP', sans-serif;
     }
-    .participant-card { border: 1px solid #eee; padding: 10px; margin-bottom: 10px; background: #fafafa; }
-    .submit-btn { background: #4CAF50; color: white; padding: 15px; border: none; width: 100%; font-size: 18px; cursor: pointer; border-radius: 4px; }
+    .participant-card { border: 1px solid #e7ede9; border-radius: 8px; padding: 14px; margin-bottom: 12px; background: #fff; }
+    .submit-btn {
+      background: var(--turquoise);
+      color: white;
+      padding: 16px;
+      border: none;
+      width: 100%;
+      font-size: 18px;
+      font-family: 'Noto Serif JP', serif;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      border-radius: 999px;
+      transition: background-color 0.3s ease;
+    }
+    .submit-btn:hover:not(:disabled) { background: var(--turquoise-light); }
     .submit-btn:disabled { background: #ccc; }
-    
+
     /* 支払い方法（ラジオボタン）のスタイル調整 */
-    .payment-group { margin-bottom: 20px; padding: 10px; border: 1px dashed #ccc; border-radius: 4px; }
+    .payment-group { margin-bottom: 22px; padding: 14px; border: 1px solid #e7ede9; border-radius: 8px; background: #fff; }
+    .payment-group > label { margin-bottom: 10px; }
     .form-check { display: flex; align-items: center; margin-bottom: 8px; cursor: pointer; }
-    .form-check input { width: auto; margin-right: 10px; cursor: pointer; }
+    .form-check input { width: auto; margin-right: 10px; cursor: pointer; accent-color: var(--turquoise); }
     .form-check label { margin-bottom: 0; cursor: pointer; font-weight: normal; }
 
     .hp-field { display: none !important; visibility: hidden !important; }
 
-    .policy-box { 
-      background: #fff9f0; 
-      border: 1px solid #ffcc80; 
-      padding: 15px; 
-      border-radius: 4px; 
-      font-size: 0.9em; 
-      margin-bottom: 20px;
-      line-height: 1.5;
+    /* --- カレンダー --- */
+    .calendar-wrap {
+      border: 1px solid #dbe2df;
+      border-radius: 10px;
+      padding: 14px 14px 18px;
+      background: #fff;
     }
-    .policy-box h3 { margin-top: 0; color: #e67e22; font-size: 1.1em; }
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .cal-month {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 1.05em;
+      color: var(--turquoise);
+      letter-spacing: 0.05em;
+    }
+    .cal-nav {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      line-height: 1;
+      color: var(--turquoise);
+      cursor: pointer;
+      padding: 4px 12px;
+      border-radius: 6px;
+    }
+    .cal-nav:hover { background: var(--turquoise-soft); }
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-size: 0.72em;
+      color: #9aa5a1;
+      margin-bottom: 6px;
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+    }
+    .cal-cell {
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85em;
+      border-radius: 8px;
+      color: #d3d8d5;
+    }
+    .cal-cell.empty { visibility: hidden; }
+    .cal-cell.has-tour {
+      background: var(--turquoise-soft);
+      color: #0f6d68;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid #bfe6e1;
+    }
+    .cal-cell.has-tour:hover { background: #c9ece6; }
+    .cal-cell.selected {
+      background: var(--turquoise) !important;
+      color: #fff !important;
+      border-color: var(--turquoise) !important;
+    }
+    .cal-cell.sold-out {
+      background: #f2f2ef;
+      color: #c3c7c3;
+      text-decoration: line-through;
+      cursor: not-allowed;
+      border: 1px solid #ececec;
+    }
+    .calendar-empty {
+      text-align: center;
+      font-size: 0.85em;
+      color: #9aa5a1;
+      margin: 14px 0 2px;
+    }
+    .selected-tour-info {
+      margin-top: 12px;
+      padding: 10px 12px;
+      background: var(--turquoise-soft);
+      border-radius: 8px;
+      font-size: 0.88em;
+      color: #0f6d68;
+      font-weight: 500;
+    }
+    .field-error {
+      color: #c0392b;
+      font-size: 0.85em;
+      margin-top: 8px;
+    }
+    .field-hint {
+      color: #0f6d68;
+      font-size: 0.85em;
+      margin-top: 6px;
+    }
+
+    .policy-box {
+      background: #f8fafc;
+      border: 1px solid #dbe2df;
+      padding: 16px;
+      border-radius: 8px;
+      font-size: 0.9em;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .policy-box h3 { margin-top: 0; color: var(--turquoise); font-size: 1.1em; }
     .policy-section { margin-bottom: 12px; }
-    .policy-title { font-weight: bold; color: #333; text-decoration: underline; }
-    .ack-group { text-align: center; background: #eee; padding: 10px; border-radius: 4px; }
+    .policy-title { font-weight: bold; color: #333; }
+    .ack-group { text-align: center; background: var(--mist); padding: 12px; border-radius: 8px; }
     .ack-group label { display: inline-block; cursor: pointer; }
-    .ack-group input { width: auto; margin-right: 8px; }
+    .ack-group input { width: auto; margin-right: 8px; accent-color: var(--turquoise); }
 
     #success-message { display: none; text-align: center; padding: 40px 10px; }
-    #success-message h2 { color: #4CAF50; }
+    #success-message h2 { color: var(--turquoise); }
 
     @media (max-width: 480px) {
       .container {
-        padding: 12px;
+        padding: 20px 16px 32px;
       }
       .participant-card {
         padding: 12px;
@@ -102,11 +257,23 @@
 
       <div class="input-group">
         <label>参加希望日</label>
-        <select id="tourSelect" name="tourId" required onchange="updateTourInfo()">
-          <option value="">読み込み中...</option>
-        </select>
+        <div class="calendar-wrap">
+          <div class="calendar-header">
+            <button type="button" class="cal-nav" id="calPrev" aria-label="前の月">‹</button>
+            <span id="calMonthLabel" class="cal-month">読み込み中...</span>
+            <button type="button" class="cal-nav" id="calNext" aria-label="次の月">›</button>
+          </div>
+          <div class="calendar-weekdays">
+            <span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span>
+          </div>
+          <div class="calendar-grid" id="calendarGrid"></div>
+          <p class="calendar-empty" id="calendarEmpty" style="display:none;"></p>
+        </div>
+        <div class="selected-tour-info" id="selectedTourInfo" style="display:none;"></div>
+        <p class="field-error" id="tourError" style="display:none;">参加希望日を選択してください</p>
         <input type="hidden" id="tourName" name="tourName">
         <input type="hidden" id="tourDate" name="tourDate">
+        <input type="hidden" id="tourValue" name="tourId">
       </div>
 
       <div class="payment-group">
@@ -123,12 +290,13 @@
 
       <div class="input-group">
         <label>参加人数 (1〜4名)</label>
-        <select name="count" onchange="generateParticipantFields(this.value)">
+        <select id="countSelect" name="count" onchange="generateParticipantFields(this.value)">
           <option value="1">1名</option>
           <option value="2">2名</option>
           <option value="3">3名</option>
           <option value="4">4名</option>
         </select>
+        <p class="field-hint" id="countHint" style="display:none;"></p>
       </div>
 
       <div id="participantContainer"></div>
@@ -225,10 +393,17 @@
 <script>
   const GAS_API_URL = "https://script.google.com/macros/s/AKfycbybpSwSnx1e2sy89IQpjwV2Ye99cXXSqg6kGMAZ21joBcpj7FC2Ujif5QhbDXVeewsB/exec";
   let tourData = [];
+  let filteredTours = [];
+  let calendarViewDate = new Date();
+  let selectedTourValue = null;
 
 window.onload = function() {
     // 参加者フィールドの初期生成
     generateParticipantFields(1);
+
+    // カレンダーの月送りボタン
+    document.getElementById('calPrev').addEventListener('click', () => changeMonth(-1));
+    document.getElementById('calNext').addEventListener('click', () => changeMonth(1));
 
     // LIFFの初期化
     liff.init({ liffId: "2010045353-fQ7AOUJA" }).then(() => {
@@ -264,28 +439,22 @@ window.onload = function() {
     });
   };
 
-  // --- 追加：ツアー一覧を取得してセレクトボックスを生成する関数 ---
+  // --- ツアー一覧を取得してカレンダーを描画する関数 ---
   function loadTours(isInLine) {
     fetch(GAS_API_URL + "?action=getAvailableTours")
       .then(res => res.json())
       .then(options => {
         tourData = options;
 
-        const select = document.getElementById('tourSelect');
-        select.innerHTML = '<option value="">ツアーを選択してください</option>';
+        // 【ここが肝】通常のブラウザ（LINE外）かつ LINE限定ツアーの場合はスキップ（非表示）
+        filteredTours = options.filter(opt => isInLine || !opt.isLineOnly);
 
-        options.forEach(opt => {
-          // 【ここが肝】通常のブラウザ（LINE外）かつ LINE限定ツアーの場合はスキップ（非表示）
-          if (!isInLine && opt.isLineOnly) {
-            return;
-          }
-
-          const el = document.createElement('option');
-          el.value = opt.value;
-          el.textContent = opt.label;
-          el.disabled = opt.disabled;
-          select.appendChild(el);
-        });
+        // 一番早いツアーがある月を初期表示にする
+        if (filteredTours.length > 0) {
+          const first = new Date(filteredTours[0].rawDate);
+          calendarViewDate = new Date(first.getFullYear(), first.getMonth(), 1);
+        }
+        renderCalendar();
       })
       .catch(err => {
         console.error(err);
@@ -293,14 +462,115 @@ window.onload = function() {
       });
   }
 
-  // --- 以下の関数は既存のまま ---
-  function updateTourInfo() {
-    const select = document.getElementById('tourSelect');
-    const selected = tourData.find(t => t.value === select.value);
-    if (selected) {
-      document.getElementById('tourName').value = selected.tourName;
-      document.getElementById('tourDate').value = selected.date;
+  function toursInMonth(year, month) {
+    return filteredTours.filter(t => {
+      const d = new Date(t.rawDate);
+      return d.getFullYear() === year && d.getMonth() === month;
+    });
+  }
+
+  function renderCalendar() {
+    const year = calendarViewDate.getFullYear();
+    const month = calendarViewDate.getMonth();
+    document.getElementById('calMonthLabel').textContent = year + '年' + (month + 1) + '月';
+
+    const monthTours = toursInMonth(year, month);
+    const tourByDay = {};
+    monthTours.forEach(t => {
+      tourByDay[new Date(t.rawDate).getDate()] = t;
+    });
+
+    const firstWeekday = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    const grid = document.getElementById('calendarGrid');
+    grid.innerHTML = '';
+
+    for (let i = 0; i < firstWeekday; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'cal-cell empty';
+      grid.appendChild(cell);
     }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const cell = document.createElement('div');
+      cell.textContent = day;
+      const tour = tourByDay[day];
+
+      if (tour) {
+        cell.className = 'cal-cell ' + (tour.disabled ? 'sold-out' : 'has-tour');
+        if (!tour.disabled) {
+          if (tour.value === selectedTourValue) cell.classList.add('selected');
+          cell.addEventListener('click', () => selectTourDate(tour.value));
+        }
+      } else {
+        cell.className = 'cal-cell';
+      }
+      grid.appendChild(cell);
+    }
+
+    const emptyMsg = document.getElementById('calendarEmpty');
+    if (filteredTours.length === 0) {
+      emptyMsg.textContent = '現在開催予定のツアーはありません。';
+      emptyMsg.style.display = 'block';
+    } else if (monthTours.length === 0) {
+      emptyMsg.textContent = 'この月に開催予定のツアーはありません。前後の月をご確認ください。';
+      emptyMsg.style.display = 'block';
+    } else {
+      emptyMsg.style.display = 'none';
+    }
+  }
+
+  function changeMonth(delta) {
+    calendarViewDate = new Date(calendarViewDate.getFullYear(), calendarViewDate.getMonth() + delta, 1);
+    renderCalendar();
+  }
+
+  function selectTourDate(value) {
+    const tour = filteredTours.find(t => t.value === value);
+    if (!tour || tour.disabled) return;
+
+    selectedTourValue = value;
+    document.getElementById('tourName').value = tour.tourName;
+    document.getElementById('tourDate').value = tour.date;
+    document.getElementById('tourValue').value = tour.value;
+    document.getElementById('tourError').style.display = 'none';
+
+    const info = document.getElementById('selectedTourInfo');
+    info.style.display = 'block';
+    info.textContent = '選択中： ' + tour.label;
+
+    updateParticipantCountOptions(tour);
+    renderCalendar();
+  }
+
+  // 選択したツアーの残席数に合わせて「参加人数」の選択肢を制限する
+  function updateParticipantCountOptions(tour) {
+    const countSelect = document.getElementById('countSelect');
+    const countHint = document.getElementById('countHint');
+    const hasRemaining = typeof tour.remaining === 'number';
+    const maxAllowed = hasRemaining ? Math.max(1, Math.min(4, tour.remaining)) : 4;
+
+    const currentValue = parseInt(countSelect.value, 10) || 1;
+
+    countSelect.innerHTML = '';
+    for (let n = 1; n <= maxAllowed; n++) {
+      const opt = document.createElement('option');
+      opt.value = n;
+      opt.textContent = n + '名';
+      countSelect.appendChild(opt);
+    }
+
+    if (hasRemaining && tour.remaining < 4) {
+      countHint.textContent = `この日程は残り${tour.remaining}名様までご予約いただけます。`;
+      countHint.style.display = 'block';
+    } else {
+      countHint.style.display = 'none';
+    }
+
+    const newValue = Math.min(currentValue, maxAllowed);
+    countSelect.value = newValue;
+    generateParticipantFields(newValue);
   }
 
   function generateParticipantFields(num) {
@@ -330,7 +600,14 @@ window.onload = function() {
     
     if (this.hp_job_field.value !== "") {
       console.warn("Spam detected.");
-      return false; 
+      return false;
+    }
+
+    if (!selectedTourValue) {
+      const err = document.getElementById('tourError');
+      err.style.display = 'block';
+      err.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return false;
     }
 
     const btn = document.getElementById('submitBtn');
