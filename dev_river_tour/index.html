@@ -141,13 +141,22 @@
     .cal-cell {
       aspect-ratio: 1;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
+      gap: 1px;
       font-size: 0.85em;
       border-radius: 8px;
       color: #d3d8d5;
     }
     .cal-cell.empty { visibility: hidden; }
+    .cal-day { line-height: 1; }
+    .cal-badge {
+      font-size: 0.6em;
+      line-height: 1;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
     .cal-cell.has-tour {
       background: var(--turquoise-soft);
       color: #0f6d68;
@@ -156,18 +165,28 @@
       border: 1px solid #bfe6e1;
     }
     .cal-cell.has-tour:hover { background: #c9ece6; }
+    .cal-cell.has-tour.low-stock {
+      background: #fdf0e2;
+      border-color: #f0d3ab;
+      color: #a3631a;
+    }
+    .cal-cell.has-tour.low-stock:hover { background: #fbe6cd; }
+    .cal-cell.has-tour.low-stock .cal-badge { color: #b3541e; }
+    .cal-cell.has-tour .cal-badge { color: #4a9d97; }
     .cal-cell.selected {
       background: var(--turquoise) !important;
       color: #fff !important;
       border-color: var(--turquoise) !important;
     }
+    .cal-cell.selected .cal-badge { color: #fff !important; opacity: 0.85; }
     .cal-cell.sold-out {
       background: #f2f2ef;
       color: #c3c7c3;
-      text-decoration: line-through;
       cursor: not-allowed;
       border: 1px solid #ececec;
     }
+    .cal-cell.sold-out .cal-day { text-decoration: line-through; }
+    .cal-cell.sold-out .cal-badge { color: #c3c7c3; }
     .calendar-empty {
       text-align: center;
       font-size: 0.85em;
@@ -494,11 +513,28 @@ window.onload = function() {
 
     for (let day = 1; day <= daysInMonth; day++) {
       const cell = document.createElement('div');
-      cell.textContent = day;
       const tour = tourByDay[day];
 
+      const dayEl = document.createElement('span');
+      dayEl.className = 'cal-day';
+      dayEl.textContent = day;
+      cell.appendChild(dayEl);
+
       if (tour) {
-        cell.className = 'cal-cell ' + (tour.disabled ? 'sold-out' : 'has-tour');
+        const hasRemaining = typeof tour.remaining === 'number';
+        const isLowStock = hasRemaining && !tour.disabled && tour.remaining > 0 && tour.remaining <= 3;
+
+        cell.className = 'cal-cell ' + (tour.disabled ? 'sold-out' : 'has-tour') + (isLowStock ? ' low-stock' : '');
+
+        const badgeEl = document.createElement('span');
+        badgeEl.className = 'cal-badge';
+        if (tour.disabled) {
+          badgeEl.textContent = '満席';
+        } else if (isLowStock) {
+          badgeEl.textContent = '残' + tour.remaining;
+        }
+        if (badgeEl.textContent) cell.appendChild(badgeEl);
+
         if (!tour.disabled) {
           if (tour.value === selectedTourValue) cell.classList.add('selected');
           cell.addEventListener('click', () => selectTourDate(tour.value));
