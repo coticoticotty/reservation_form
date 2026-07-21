@@ -3,82 +3,353 @@
 <head>
   <base target="_top">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --ink: #2b2a25;
+      --paper: #f5f1e4;
+      --paper-2: #ece3cd;
+      --forest: #24382c;
+      --forest-deep: #16241c;
+      --sand: #d9cba6;
+      --gold: #b8863f;
+      --gold-light: #d4ab5f;
+    }
+
+    * { box-sizing: border-box; }
+
     body {
-      font-family: sans-serif;
+      font-family: 'Zen Kaku Gothic New', sans-serif;
       margin: 0;
       padding: 0;
-      background: #f4f7f6;
+      background: var(--paper);
+      color: var(--ink);
     }
+
+    h1, h2, h3, .font-display {
+      font-family: 'Zen Old Mincho', serif;
+    }
+
+    .brand-bar {
+      background: var(--forest-deep);
+      color: var(--paper);
+      padding: 18px 20px;
+      text-align: center;
+      font-family: 'Zen Old Mincho', serif;
+      font-size: 1.05em;
+      letter-spacing: 0.04em;
+    }
+
     .container {
       width: 100%;
       max-width: 600px;
       margin: 0 auto;
-      background: white;
-      padding: 16px;
+      background: var(--paper);
+      padding: 24px 20px 40px;
       border-radius: 0;
       box-shadow: none;
     }
-    .input-group { margin-bottom: 15px; }
-    label { font-weight: bold; display: block; margin-bottom: 5px; }
-    input, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;}
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .form-eyebrow {
+      font-family: 'Zen Old Mincho', serif;
+      letter-spacing: 0.28em;
+      font-size: 0.7rem;
+      color: var(--gold);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 8px;
+    }
+    .form-header h2 {
+      margin: 0;
+      font-size: 1.5em;
+      font-weight: 600;
+      color: var(--forest-deep);
+    }
+
+    .input-group { margin-bottom: 18px; }
+    label {
+      font-weight: 500;
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.92em;
+      color: var(--forest-deep);
+    }
+
+    input, select {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1px solid var(--sand);
+      border-radius: 4px;
+      box-sizing: border-box;
+      background: #fff;
+      color: var(--ink);
+      font-family: inherit;
+    }
     input,
     select,
     button {
       font-size: 16px;
     }
-    .participant-card { border: 1px solid #eee; padding: 10px; margin-bottom: 10px; background: #fafafa; }
-    .submit-btn { background: #4CAF50; color: white; padding: 15px; border: none; width: 100%; font-size: 18px; cursor: pointer; border-radius: 4px; }
-    .submit-btn:disabled { background: #ccc; }
-    
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(184,134,63,0.18);
+    }
+
+    .participant-card {
+      border: 1px solid var(--sand);
+      padding: 14px;
+      margin-bottom: 10px;
+      background: var(--paper-2);
+      border-radius: 4px;
+    }
+    .participant-card label { margin-bottom: 6px; }
+
+    #participantContainer h3 {
+      font-size: 1.02em;
+      color: var(--forest-deep);
+      margin: 24px 0 12px;
+    }
+
+    .submit-btn {
+      background: var(--gold);
+      color: var(--forest-deep);
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      font-weight: 700;
+      padding: 16px;
+      border: none;
+      width: 100%;
+      font-size: 17px;
+      cursor: pointer;
+      border-radius: 4px;
+      letter-spacing: 0.02em;
+      transition: background-color 0.2s ease;
+    }
+    .submit-btn:hover:not(:disabled) { background: var(--gold-light); }
+    .submit-btn:disabled { background: var(--sand); color: var(--ink); opacity: 0.7; }
+
     /* 支払い方法（ラジオボタン）のスタイル調整 */
-    .payment-group { margin-bottom: 20px; padding: 10px; border: 1px dashed #ccc; border-radius: 4px; }
+    .payment-group {
+      margin-bottom: 20px;
+      padding: 14px;
+      border: 1px dashed var(--sand);
+      border-radius: 4px;
+      background: var(--paper-2);
+    }
     .form-check { display: flex; align-items: center; margin-bottom: 8px; cursor: pointer; }
-    .form-check input { width: auto; margin-right: 10px; cursor: pointer; }
-    .form-check label { margin-bottom: 0; cursor: pointer; font-weight: normal; }
+    .form-check input { width: auto; margin-right: 10px; cursor: pointer; accent-color: var(--gold); }
+    .form-check label { margin-bottom: 0; cursor: pointer; font-weight: 400; color: var(--ink); }
+
+    input[type="radio"] { accent-color: var(--gold); }
 
     .hp-field { display: none !important; visibility: hidden !important; }
 
-    .policy-box { 
-      background: #fff9f0; 
-      border: 1px solid #ffcc80; 
-      padding: 15px; 
-      border-radius: 4px; 
-      font-size: 0.9em; 
+    .policy-box {
+      background: var(--paper-2);
+      border: 1px solid var(--sand);
+      padding: 16px;
+      border-radius: 4px;
+      font-size: 0.9em;
       margin-bottom: 20px;
-      line-height: 1.5;
+      line-height: 1.6;
+      color: var(--ink);
     }
-    .policy-box h3 { margin-top: 0; color: #e67e22; font-size: 1.1em; }
+    .policy-box h3 {
+      margin-top: 0;
+      color: var(--forest-deep);
+      font-size: 1.05em;
+      font-weight: 600;
+    }
     .policy-section { margin-bottom: 12px; }
-    .policy-title { font-weight: bold; color: #333; text-decoration: underline; }
-    .ack-group { text-align: center; background: #eee; padding: 10px; border-radius: 4px; }
-    .ack-group label { display: inline-block; cursor: pointer; }
-    .ack-group input { width: auto; margin-right: 8px; }
+    .policy-title {
+      font-weight: 700;
+      color: var(--forest-deep);
+      text-decoration: none;
+      border-bottom: 1px solid var(--gold);
+    }
+    .ack-group {
+      text-align: center;
+      background: var(--sand);
+      padding: 14px;
+      border-radius: 4px;
+    }
+    .ack-group label { display: inline-block; cursor: pointer; color: var(--forest-deep); font-weight: 500; }
+    .ack-group input { width: auto; margin-right: 8px; accent-color: var(--forest); }
 
-    #success-message { display: none; text-align: center; padding: 40px 10px; }
-    #success-message h2 { color: #4CAF50; }
+    #success-message { display: none; text-align: center; padding: 56px 20px; }
+    #success-message .success-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--forest);
+      color: var(--gold-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 18px;
+      font-size: 1.6em;
+    }
+    #success-message h2 { color: var(--forest-deep); margin-bottom: 10px; }
+    #success-message p { color: var(--ink); line-height: 1.6; }
+
+    ::selection { background: var(--gold-light); color: var(--forest-deep); }
+
+    /* --- Calendar --- */
+    .calendar {
+      border: 1px solid var(--sand);
+      border-radius: 4px;
+      background: #fff;
+      padding: 14px;
+    }
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .calendar-header button {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--sand);
+      background: var(--paper-2);
+      color: var(--forest-deep);
+      border-radius: 4px;
+      font-size: 1.1em;
+      line-height: 1;
+      cursor: pointer;
+    }
+    .calendar-header button:disabled { opacity: 0.35; cursor: not-allowed; }
+    .calendar-month {
+      font-family: 'Zen Old Mincho', serif;
+      font-weight: 600;
+      color: var(--forest-deep);
+      font-size: 1.02em;
+    }
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-size: 0.7em;
+      letter-spacing: 0.04em;
+      color: var(--ink);
+      opacity: 0.55;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+    .cal-cell {
+      aspect-ratio: 1;
+      border: 1px solid transparent;
+      border-radius: 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2px;
+    }
+    .cal-cell.empty { visibility: hidden; }
+    .cal-cell .cal-day { font-size: 0.85em; color: var(--ink); }
+    .cal-cell .cal-remaining { font-size: 0.6em; color: var(--gold); font-weight: 700; margin-top: 1px; }
+    .cal-cell.has-tour { cursor: pointer; background: var(--paper-2); border-color: var(--sand); }
+    .cal-cell.has-tour:hover { border-color: var(--gold); }
+    .cal-cell.full { opacity: 0.4; }
+    .cal-cell.full .cal-remaining { color: var(--ink); font-weight: 400; }
+    .cal-cell.past { opacity: 0.3; }
+    .cal-cell.selected { background: var(--forest); border-color: var(--forest); }
+    .cal-cell.selected .cal-day,
+    .cal-cell.selected .cal-remaining { color: var(--paper); }
+
+    .calendar-status {
+      font-size: 0.85em;
+      color: var(--ink);
+      opacity: 0.6;
+      padding: 4px 2px;
+    }
+
+    .slot-picker { margin-top: 14px; }
+    .slot-picker-label {
+      font-size: 0.8em;
+      font-weight: 600;
+      color: var(--forest-deep);
+      display: block;
+      margin-bottom: 8px;
+    }
+    .slot-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .slot-btn {
+      border: 1px solid var(--sand);
+      background: #fff;
+      padding: 10px 14px;
+      border-radius: 4px;
+      font-size: 0.9em;
+      cursor: pointer;
+      color: var(--ink);
+      font-family: 'Zen Kaku Gothic New', sans-serif;
+      text-align: center;
+    }
+    .slot-btn:hover:not(:disabled) { border-color: var(--gold); }
+    .slot-btn.selected { background: var(--forest); border-color: var(--forest); color: var(--paper); }
+    .slot-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .slot-btn .slot-remaining { display: block; font-size: 0.78em; opacity: 0.75; margin-top: 2px; }
+
+    .selected-summary {
+      display: none;
+      margin-top: 12px;
+      padding: 10px 12px;
+      background: var(--paper-2);
+      border: 1px solid var(--sand);
+      border-radius: 4px;
+      font-size: 0.88em;
+      color: var(--forest-deep);
+    }
+
+    .field-error {
+      display: none;
+      color: #a83c2b;
+      font-size: 0.82em;
+      margin-top: 8px;
+    }
+
+    select:disabled {
+      background: var(--paper-2);
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
 
     @media (max-width: 480px) {
       .container {
-        padding: 12px;
+        padding: 20px 16px 36px;
       }
       .participant-card {
         padding: 12px;
       }
       .submit-btn {
-        font-size: 18px;
+        font-size: 17px;
         padding: 16px;
       }
-}
-</style>
+    }
+  </style>
 </head>
 <body>
+<div class="brand-bar">禅 Zen Walking Hakone</div>
 <div class="container">
-  
+
   <div id="form-wrapper">
-    <h2>TEST ZenWalkingTour Booking Form</h2>
+    <div class="form-header">
+      <span class="form-eyebrow">ご予約 · Reservation</span>
+      <h2>TEST ZenWalkingTour Booking Form</h2>
+    </div>
     <form id="resForm">
-      
+
       <div class="hp-field">
         <label>Occupation（入力しないでください）</label>
         <input type="text" name="hp_job_field" tabindex="-1" autocomplete="off">
@@ -97,11 +368,30 @@
 
       <div class="input-group">
         <label>Preferred Tour Date</label>
-        <select id="tourSelect" name="tourId" required onchange="updateTourInfo()">
-          <option value="">roading...</option>
-        </select>
+        <div class="calendar" id="calendar">
+          <div class="calendar-header">
+            <button type="button" id="calPrev" aria-label="Previous month">&#8249;</button>
+            <span class="calendar-month" id="calMonthLabel"></span>
+            <button type="button" id="calNext" aria-label="Next month">&#8250;</button>
+          </div>
+          <div class="calendar-weekdays">
+            <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+          </div>
+          <div class="calendar-grid" id="calGrid"></div>
+        </div>
+        <p class="calendar-status" id="calendarStatus">Loading availability…</p>
+
+        <div class="slot-picker" id="slotPicker" style="display:none;">
+          <span class="slot-picker-label">Available Times</span>
+          <div class="slot-list" id="slotList"></div>
+        </div>
+        <div class="selected-summary" id="selectedTourSummary"></div>
+        <p class="field-error" id="tourSelectError">Please select a date and time for your tour.</p>
+
+        <input type="hidden" id="tourId" name="tourId">
         <input type="hidden" id="tourName" name="tourName">
         <input type="hidden" id="tourDate" name="tourDate">
+        <input type="hidden" id="tourTime" name="tourTime">
         <input type="hidden" id="tourPrice" name="tourPrice">
       </div>
       <div class="input-group">
@@ -119,8 +409,8 @@
 
       <div id="participantContainer"></div>
 
-      <div class="policy-box" style="background: #f8fafc; border-color: #cbd5e1;">
-        <h3 style="color: #475569;">Tour Information & What to Bring</h3>
+      <div class="policy-box">
+        <h3>Tour Information & What to Bring</h3>
         <div class="policy-section">
           <span class="policy-title">What to Bring</span><br>
           ・Comfortable clothing<br>
@@ -130,7 +420,7 @@
         <div class="policy-section">
           <span class="policy-title">About Insurance</span><br>
           The tour fee includes the following insurance coverage:<br>
-          <div style="margin-top: 5px; padding-left: 8px; border-left: 3px solid #cbd5e1; color: #475569;">
+          <div style="margin-top: 5px; padding-left: 8px; border-left: 3px solid var(--sand); color: var(--ink);">
             <strong>【Domestic Accident Insurance (Tokio Marine & Nichido)】</strong><br>
             ・Death & Permanent Disability: 10,000,000 JPY<br>
             ・Daily Hospitalization Benefit: 10,000 JPY<br>
@@ -148,7 +438,7 @@
         </div>
         <div class="policy-section">
           <span class="policy-title">Risks of Mountain Trekking</span><br>
-          This tour involves walking on mountain trails for about an hour. 
+          This tour involves walking on mountain trails for about an hour.
           In the unlikely event of an injury or accident during the tour, the guide will promptly provide first aid and take the best possible actions, including requesting emergency services if necessary. However, please note that we cannot assume any further liability (such as medical expenses or compensation for damages).<br>
           We kindly ask that you understand and accept these inherent risks of nature before participating.
         </div>
@@ -173,7 +463,7 @@
 
         <div class="ack-group">
           <label>
-            <input type="radio" name="ack" value="はい" required> 
+            <input type="radio" name="ack" value="はい" required>
             I have read and agree to all the terms above. "Yes"
           </label>
         </div>
@@ -183,9 +473,10 @@
   </div>
 
   <div id="success-message">
+    <div class="success-icon">&#10003;</div>
     <h2>Thank you for your booking.</h2>
     <p>A confirmation email has been sent to you.</p>
-    <p>If you do not receive the email, please check your spam or junk folder. If you still cannot find it, please contact us at the email address below.</p>    
+    <p>If you do not receive the email, please check your spam or junk folder. If you still cannot find it, please contact us at the email address below.</p>
     <p>kohei.okamoto@hitotowa.info</p>
   </div>
 </div>
@@ -193,44 +484,179 @@
 <script>
   const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzUUGq0LY80q6jBkkCWl_k9PA2-0yjKJ_5QDQR1x2TZ6Xjx0-yNof-pCSOuU1fKXvue4Q/exec";
   let tourData = [];
+  let toursByDate = {};
+  let calendarYear, calendarMonth, minCalMonth, maxCalMonth;
+  let selectedDateKey = null;
 
   window.onload = function() {
-    // 1. ツアー一覧の取得（既存処理）
-  fetch(GAS_API_URL + "?action=getAvailableTours")
-    .then(res => res.json())
-    .then(options => {
-      tourData = options;
+    const now = new Date();
+    calendarYear = now.getFullYear();
+    calendarMonth = now.getMonth();
+    minCalMonth = calendarYear * 12 + calendarMonth;
+    maxCalMonth = minCalMonth + 1; // matches backend: today through end of next month
 
-      const select = document.getElementById('tourSelect');
+    renderCalendar();
 
-      select.innerHTML = '<option value="">Select Tour</option>';
-
-      options.forEach(opt => {
-        const el = document.createElement('option');
-        el.value = opt.value;
-        el.textContent = opt.label;
-        el.disabled = opt.disabled;
-        select.appendChild(el);
-      });
-    })
-    .catch(err => {
-      console.error(err);
-      alert("Failed to get the tour list");
+    document.getElementById('calPrev').addEventListener('click', function() {
+      calendarMonth--;
+      if (calendarMonth < 0) { calendarMonth = 11; calendarYear--; }
+      renderCalendar();
     });
-    
+    document.getElementById('calNext').addEventListener('click', function() {
+      calendarMonth++;
+      if (calendarMonth > 11) { calendarMonth = 0; calendarYear++; }
+      renderCalendar();
+    });
+
+    // 1. ツアー一覧の取得（既存処理）
+    fetch(GAS_API_URL + "?action=getAvailableTours")
+      .then(res => res.json())
+      .then(options => {
+        tourData = options;
+        buildToursByDate();
+        document.getElementById('calendarStatus').style.display = 'none';
+        renderCalendar();
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('calendarStatus').textContent = 'Failed to load tour availability. Please reload the page.';
+        alert("Failed to get the tour list");
+      });
+
     generateParticipantFields(1);
 
   };
 
-  // --- 以下の関数は既存のまま ---
-  function updateTourInfo() {
-    const select = document.getElementById('tourSelect');
-    const selected = tourData.find(t => t.value === select.value);
-    if (selected) {
-      document.getElementById('tourName').value = selected.tourName;
-      document.getElementById('tourDate').value = selected.systemDate;
-      document.getElementById('tourPrice').value = selected.price;
+  function pad2(n) { return String(n).padStart(2, '0'); }
+
+  function buildToursByDate() {
+    toursByDate = {};
+    tourData.forEach(function(t) {
+      if (!toursByDate[t.systemDate]) toursByDate[t.systemDate] = [];
+      toursByDate[t.systemDate].push(t);
+    });
+    Object.keys(toursByDate).forEach(function(key) {
+      toursByDate[key].sort(function(a, b) { return (a.time || '').localeCompare(b.time || ''); });
+    });
+  }
+
+  function renderCalendar() {
+    const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    document.getElementById('calMonthLabel').textContent = monthNames[calendarMonth] + ' ' + calendarYear;
+
+    const idx = calendarYear * 12 + calendarMonth;
+    document.getElementById('calPrev').disabled = idx <= minCalMonth;
+    document.getElementById('calNext').disabled = idx >= maxCalMonth;
+
+    const grid = document.getElementById('calGrid');
+    grid.innerHTML = '';
+
+    const firstDay = new Date(calendarYear, calendarMonth, 1).getDay();
+    const daysInMonth = new Date(calendarYear, calendarMonth + 1, 0).getDate();
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+
+    for (let i = 0; i < firstDay; i++) {
+      const empty = document.createElement('div');
+      empty.className = 'cal-cell empty';
+      grid.appendChild(empty);
     }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const key = calendarYear + '/' + pad2(calendarMonth + 1) + '/' + pad2(d);
+      const sessions = toursByDate[key] || [];
+      const cell = document.createElement('div');
+      cell.className = 'cal-cell';
+
+      const dayEl = document.createElement('span');
+      dayEl.className = 'cal-day';
+      dayEl.textContent = d;
+      cell.appendChild(dayEl);
+
+      const cellDate = new Date(calendarYear, calendarMonth, d);
+      const isPast = cellDate < todayStart;
+
+      if (sessions.length) {
+        const totalRemaining = sessions.reduce(function(sum, s) { return sum + Math.max(0, s.remaining); }, 0);
+        const anyOpen = sessions.some(function(s) { return s.remaining > 0 && !s.disabled; });
+
+        const badge = document.createElement('span');
+        badge.className = 'cal-remaining';
+        badge.textContent = anyOpen ? (totalRemaining + ' left') : 'Full';
+        cell.appendChild(badge);
+
+        if (anyOpen && !isPast) {
+          cell.classList.add('has-tour');
+          cell.addEventListener('click', function() { selectDate(key, cell); });
+        } else {
+          cell.classList.add('full');
+        }
+      }
+      if (isPast) cell.classList.add('past');
+      if (key === selectedDateKey) cell.classList.add('selected');
+
+      grid.appendChild(cell);
+    }
+  }
+
+  function selectDate(key, cellEl) {
+    selectedDateKey = key;
+    document.querySelectorAll('.cal-cell.selected').forEach(function(el) { el.classList.remove('selected'); });
+    cellEl.classList.add('selected');
+
+    const sessions = toursByDate[key] || [];
+    const slotList = document.getElementById('slotList');
+    slotList.innerHTML = '';
+
+    sessions.forEach(function(session) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'slot-btn';
+      const isFull = session.remaining <= 0 || session.disabled;
+      btn.disabled = isFull;
+      btn.innerHTML = session.time + '<span class="slot-remaining">' + (isFull ? 'Fully booked' : session.remaining + ' spots left') + '</span>';
+      btn.addEventListener('click', function() { selectSession(session, btn); });
+      slotList.appendChild(btn);
+    });
+
+    document.getElementById('slotPicker').style.display = 'block';
+    document.getElementById('tourSelectError').style.display = 'none';
+  }
+
+  function selectSession(session, btnEl) {
+    document.querySelectorAll('.slot-btn').forEach(function(b) { b.classList.remove('selected'); });
+    btnEl.classList.add('selected');
+
+    document.getElementById('tourId').value = session.value;
+    document.getElementById('tourName').value = session.tourName;
+    document.getElementById('tourDate').value = session.systemDate;
+    document.getElementById('tourTime').value = session.time || '';
+    document.getElementById('tourPrice').value = session.price;
+
+    const summary = document.getElementById('selectedTourSummary');
+    summary.style.display = 'block';
+    summary.textContent = 'Selected: ' + session.date + ' · ' + session.time + ' · ¥' + Number(session.price).toLocaleString() + ' per person';
+
+    document.getElementById('tourSelectError').style.display = 'none';
+    updateParticipantCountOptions(session.remaining);
+  }
+
+  function updateParticipantCountOptions(maxRemaining) {
+    const select = document.querySelector('select[name="count"]');
+    const max = Math.max(1, Math.min(6, maxRemaining));
+    const prevValue = parseInt(select.value, 10) || 1;
+
+    select.innerHTML = '';
+    for (let i = 1; i <= max; i++) {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = i;
+      select.appendChild(opt);
+    }
+
+    const newValue = Math.min(prevValue, max);
+    select.value = newValue;
+    generateParticipantFields(newValue);
   }
 
   function generateParticipantFields(num) {
@@ -248,10 +674,16 @@
   // --- 送信処理の修正 ---
   document.getElementById('resForm').onsubmit = function(e) {
     e.preventDefault();
-    
+
     if (this.hp_job_field.value !== "") {
       console.warn("Spam detected.");
-      return false; 
+      return false;
+    }
+
+    if (!document.getElementById('tourId').value) {
+      document.getElementById('tourSelectError').style.display = 'block';
+      document.getElementById('calendar').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return false;
     }
 
     const btn = document.getElementById('submitBtn');
@@ -260,9 +692,9 @@
 
     const participants = [];
     const names = document.querySelectorAll('.p-name');
-    
+
     names.forEach((n, i) => {
-      participants.push({ 
+      participants.push({
         name: n.value.trim().substring(0, 50),
       });
     });
@@ -270,9 +702,11 @@
     // 予約データをまとめる
     const formData = {
       action: "reserve", // アクションをここに入れる
+      tourId: document.getElementById('tourId').value,
       repName: this.repName.value.trim().substring(0, 50),
       repEmail: this.repEmailField.value ? this.repEmailField.value.trim() : "",
       tourDate: this.tourDate.value,
+      tourTime: this.tourTime.value,
       tourName: this.tourName.value,
       tourPrice: this.tourPrice.value,
       lineUserId: document.getElementById('lineUserId').value,

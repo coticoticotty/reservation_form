@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Zen Walking &amp; Mindfulness Tour | Hakone</title>
+<meta name="description" content="A meditative Zen Walking experience on Hakone's 1,000-year-old Yusaka Trail. Small group, English-friendly, from ¥5,000." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;500;600;700&family=Zen+Kaku+Gothic+New:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#2b2a25',
+          paper: '#f5f1e4',
+          paper2: '#ece3cd',
+          forest: '#24382c',
+          forestdeep: '#16241c',
+          sand: '#d9cba6',
+          sanddark: '#c2b184',
+          gold: '#b8863f',
+          goldlight: '#d4ab5f',
+        },
+        fontFamily: {
+          display: ['"Zen Old Mincho"', 'serif'],
+          body: ['"Zen Kaku Gothic New"', 'sans-serif'],
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  :root{
+    --ink:#2b2a25;
+    --paper:#f5f1e4;
+    --paper-2:#ece3cd;
+    --forest:#24382c;
+    --forest-deep:#16241c;
+    --sand:#d9cba6;
+    --gold:#b8863f;
+    --gold-light:#d4ab5f;
+  }
+
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Zen Kaku Gothic New', sans-serif;
+  }
+
+  h1,h2,h3,.font-display{
+    font-family:'Zen Old Mincho', serif;
+    text-wrap:balance;
+  }
+
+  .prose-copy{
+    max-width:38rem;
+  }
+
+  /* eyebrow label */
+  .eyebrow{
+    font-family:'Zen Old Mincho', serif;
+    letter-spacing:0.28em;
+    font-size:0.72rem;
+    color:var(--gold);
+  }
+
+  /* thin hairline divider like a tatami seam */
+  .seam{
+    height:1px;
+    background:linear-gradient(90deg, transparent, rgba(43,42,37,0.18) 20%, rgba(43,42,37,0.18) 80%, transparent);
+  }
+
+  /* ema-plaque shaped numeral badge (rotated pentagon / house shape) */
+  .ema-badge{
+    width:3.25rem;
+    height:3.25rem;
+    background:var(--forest);
+    color:var(--gold-light);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Zen Old Mincho', serif;
+    font-size:1.35rem;
+    clip-path: polygon(50% 0%, 100% 28%, 100% 100%, 0% 100%, 0% 28%);
+    box-shadow:0 6px 16px -6px rgba(22,36,28,0.45);
+    flex-shrink:0;
+  }
+
+  /* scroll reveal */
+  .reveal{
+    opacity:0;
+    transform:translateY(18px);
+    transition:opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.is-visible{
+    opacity:1;
+    transform:translateY(0);
+  }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1; transform:none; transition:none;}
+  }
+
+  /* itinerary trail line */
+  .trail-line{
+    background:linear-gradient(to bottom, var(--gold), var(--sand-dark, var(--sand)));
+  }
+  .trail-dot{
+    box-shadow:0 0 0 4px var(--paper), 0 0 0 5px rgba(184,134,63,0.4);
+  }
+
+  /* accordion */
+  .faq-panel{
+    display:grid;
+    grid-template-rows:0fr;
+    transition:grid-template-rows 0.45s ease;
+  }
+  .faq-panel > div{overflow:hidden;}
+  .faq-item[data-open="true"] .faq-panel{grid-template-rows:1fr;}
+  .faq-item[data-open="true"] .faq-icon{transform:rotate(45deg);}
+  .faq-icon{transition:transform 0.35s ease;}
+
+  /* nav */
+  #site-nav{transition:background-color 0.4s ease, box-shadow 0.4s ease, backdrop-filter 0.4s ease;}
+  #site-nav.scrolled{
+    background-color:rgba(22,36,28,0.94);
+    backdrop-filter:blur(6px);
+    box-shadow:0 8px 24px -12px rgba(0,0,0,0.4);
+  }
+
+  a:focus-visible, button:focus-visible, summary:focus-visible{
+    outline:2px solid var(--gold);
+    outline-offset:3px;
+  }
+
+  .tabular{font-variant-numeric:tabular-nums;}
+
+  /* mobile menu */
+  #mobile-menu{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height 0.4s ease;
+  }
+  #mobile-menu.open{max-height:20rem;}
+
+  /* map card texture */
+  .map-card{
+    background:
+      repeating-linear-gradient(135deg, rgba(43,42,37,0.035) 0 2px, transparent 2px 14px),
+      var(--paper-2);
+    border:1px dashed rgba(43,42,37,0.35);
+  }
+</style>
+</head>
+
+<body class="antialiased">
+
+<!-- ===================== NAV ===================== -->
+<header id="site-nav" class="fixed top-0 left-0 right-0 z-50">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8 flex items-center justify-between h-16 sm:h-20">
+    <a href="#top" class="font-display text-white text-lg sm:text-xl tracking-wide">
+      禅 <span class="hidden sm:inline">Zen Walking</span> Hakone
+    </a>
+    <nav class="hidden md:flex items-center gap-8 text-sm text-white/85">
+      <a href="#concept" class="hover:text-goldlight transition-colors">Concept</a>
+      <a href="#highlights" class="hover:text-goldlight transition-colors">Highlights</a>
+      <a href="#itinerary" class="hover:text-goldlight transition-colors">Itinerary</a>
+      <a href="#guide" class="hover:text-goldlight transition-colors">Guide</a>
+      <a href="#faq" class="hover:text-goldlight transition-colors">FAQ</a>
+      <a href="#book" class="bg-gold hover:bg-goldlight text-forestdeep font-semibold px-5 py-2 rounded-sm transition-colors">Book Now</a>
+    </nav>
+    <button id="menu-toggle" class="md:hidden text-white p-2" aria-expanded="false" aria-controls="mobile-menu" aria-label="Toggle navigation menu">
+      <svg id="menu-icon-open" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      <svg id="menu-icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="hidden"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div id="mobile-menu" class="md:hidden bg-forestdeep/98 text-white/90">
+    <nav class="flex flex-col px-5 pb-5 gap-4 text-sm">
+      <a href="#concept" class="py-1">Concept</a>
+      <a href="#highlights" class="py-1">Highlights</a>
+      <a href="#itinerary" class="py-1">Itinerary</a>
+      <a href="#guide" class="py-1">Guide</a>
+      <a href="#faq" class="py-1">FAQ</a>
+      <a href="#access" class="py-1">Access</a>
+      <a href="#book" class="inline-block bg-gold text-forestdeep font-semibold px-5 py-2 rounded-sm w-max mt-1">Book Now</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ===================== HERO ===================== -->
+<section id="top" class="relative w-full">
+  <div class="relative w-full aspect-[16/9] max-h-[92vh] overflow-hidden">
+    <img
+      src="images/hero.jpg"
+      alt="A quiet mountain trail shaded by tall forest trees in Hakone, sunlight filtering through the canopy"
+      width="2000" height="1125"
+      class="w-full h-full object-cover"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-forestdeep/90 via-forestdeep/25 to-forestdeep/50"></div>
+    <div class="absolute inset-0 flex items-end sm:items-center">
+      <div class="max-w-6xl mx-auto px-5 sm:px-8 pb-12 sm:pb-0 w-full">
+        <p class="eyebrow text-goldlight uppercase mb-4 reveal">箱根 · Hakone Yusaka Trail</p>
+        <h1 class="font-display text-white text-3xl sm:text-5xl lg:text-6xl leading-tight max-w-3xl reveal">
+          Find Your Inner Peace in the Forest of Hakone.
+        </h1>
+        <p class="text-white/85 text-base sm:text-lg mt-5 max-w-xl font-light reveal">
+          A Meditative Zen Walking Experience.
+        </p>
+        <div class="mt-8 flex flex-wrap items-center gap-4 reveal">
+          <a href="#book" class="inline-block bg-gold hover:bg-goldlight text-forestdeep font-semibold px-7 py-3 rounded-sm transition-colors">
+            Book Your Zen Experience
+          </a>
+          <span class="text-white/70 text-sm">2.5 hours · Max 6 guests · English &amp; Japanese</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CONCEPT ===================== -->
+<section id="concept" class="bg-paper">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
+    <div class="grid md:grid-cols-[0.9fr_1.1fr] gap-10 md:gap-16 items-start">
+      <div class="reveal">
+        <p class="eyebrow uppercase mb-4">禅 · The Concept</p>
+        <h2 class="text-3xl sm:text-4xl leading-tight">Reset Your Mind &amp; Reconnect with Your Senses</h2>
+      </div>
+      <div class="reveal">
+        <p class="prose-copy text-[1.05rem] leading-8 text-ink/85">
+          Reset your mind and reconnect with your senses in the forest of Hakone. In our modern world of information overload, our brains are constantly overstimulated. This tour offers an opportunity to quiet the mental noise and reconnect with your physical senses through the practice of Zen Walking on the historic <span class="text-forest font-medium">Yusaka Trail</span> — a mountain path tread by travelers and pilgrims for about 1,000 years.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="seam max-w-6xl mx-auto"></div>
+</section>
+
+<!-- ===================== HIGHLIGHTS ===================== -->
+<section id="highlights" class="bg-paper">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
+    <div class="mb-14 reveal">
+      <p class="eyebrow uppercase mb-4">旅の見どころ · Tour Highlights</p>
+      <h2 class="text-3xl sm:text-4xl max-w-xl">Four Moments on the Path</h2>
+    </div>
+
+    <div class="grid sm:grid-cols-2 gap-6 sm:gap-8">
+      <!-- Highlight 1 -->
+      <article class="reveal bg-paper2 rounded-sm overflow-hidden border border-ink/5">
+        <img src="images/highlight1.jpg"
+             alt="Hands resting gently in a meditative pose during a breathing exercise outdoors"
+             width="1200" height="800" class="w-full h-52 sm:h-56 object-cover" />
+        <div class="p-6 sm:p-7">
+          <div class="flex items-start gap-4">
+            <span class="ema-badge">一</span>
+            <div>
+              <h3 class="font-display text-xl mb-2 mt-1">Simple Exercise &amp; Meditation</h3>
+              <p class="text-ink/75 leading-relaxed text-[0.95rem]">Calm your mind with a few simple exercises, followed by a brief meditation.</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Highlight 2 -->
+      <article class="reveal bg-paper2 rounded-sm overflow-hidden border border-ink/5">
+        <img src="images/highlight2.jpg"
+             alt="A traditional Japanese torii gate entrance surrounded by moss and forest trees"
+             width="1200" height="800" class="w-full h-52 sm:h-56 object-cover" />
+        <div class="p-6 sm:p-7">
+          <div class="flex items-start gap-4">
+            <span class="ema-badge">二</span>
+            <div>
+              <h3 class="font-display text-xl mb-2 mt-1">Visit Kumano Shrine</h3>
+              <p class="text-ink/75 leading-relaxed text-[0.95rem]">Offer your prayers at Kumano Shrine, the origin of Hakone's hot springs.</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Highlight 3 -->
+      <article class="reveal bg-paper2 rounded-sm overflow-hidden border border-ink/5">
+        <img src="images/highlight3.jpg"
+             alt="Slow, mindful footsteps walking along an ancient forest path"
+             width="1200" height="800" class="w-full h-52 sm:h-56 object-cover" />
+        <div class="p-6 sm:p-7">
+          <div class="flex items-start gap-4">
+            <span class="ema-badge">三</span>
+            <div>
+              <h3 class="font-display text-xl mb-2 mt-1">Zen Walking: Yusaka Trail</h3>
+              <p class="text-ink/75 leading-relaxed text-[0.95rem]">Practice Zen Walking, focusing on the sensations in the soles of your feet to calm your mind.</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Highlight 4 -->
+      <article class="reveal bg-paper2 rounded-sm overflow-hidden border border-ink/5">
+        <img src="images/highlight4.jpg"
+             alt="Close-up of handwritten messages on traditional Japanese wooden Ema plaques hanging at a shrine"
+             width="1200" height="800" class="w-full h-52 sm:h-56 object-cover" />
+        <div class="p-6 sm:p-7">
+          <div class="flex items-start gap-4">
+            <span class="ema-badge">四</span>
+            <div>
+              <h3 class="font-display text-xl mb-2 mt-1">Closing Circle &amp; Sharing</h3>
+              <p class="text-ink/75 leading-relaxed text-[0.95rem]">Write down your reflections and feelings from the tour on a traditional 'Ema' wooden plaque, and share them with the group.</p>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ITINERARY ===================== -->
+<section id="itinerary" class="bg-forestdeep text-paper">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
+    <div class="mb-16 reveal">
+      <p class="eyebrow uppercase mb-4">旅程 · The Itinerary</p>
+      <h2 class="text-3xl sm:text-4xl text-white max-w-xl">A 2.5-Hour Walk, Step by Step</h2>
+    </div>
+
+    <div class="relative pl-10 sm:pl-14">
+      <div class="trail-line absolute left-[7px] sm:left-[11px] top-2 bottom-2 w-[2px]"></div>
+
+      <ol class="space-y-10 sm:space-y-12">
+        <li class="relative reveal">
+          <span class="trail-dot absolute -left-10 sm:-left-14 top-1.5 w-3.5 h-3.5 rounded-full bg-goldlight"></span>
+          <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
+            <span class="tabular font-display text-goldlight text-lg w-20 shrink-0">10:10</span>
+            <p class="text-white/90">Meet up at <span class="font-medium">HAKONE CALLING</span> Rooftop</p>
+          </div>
+        </li>
+        <li class="relative reveal">
+          <span class="trail-dot absolute -left-10 sm:-left-14 top-1.5 w-3.5 h-3.5 rounded-full bg-goldlight"></span>
+          <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
+            <span class="tabular font-display text-goldlight text-lg w-20 shrink-0">10:15</span>
+            <p class="text-white/90">Program starts — mind-calming exercises &amp; brief meditation</p>
+          </div>
+        </li>
+        <li class="relative reveal">
+          <span class="trail-dot absolute -left-10 sm:-left-14 top-1.5 w-3.5 h-3.5 rounded-full bg-goldlight"></span>
+          <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
+            <span class="tabular font-display text-goldlight text-lg w-20 shrink-0">10:30</span>
+            <p class="text-white/90">Walk to the trail</p>
+          </div>
+        </li>
+        <li class="relative reveal">
+          <span class="trail-dot absolute -left-10 sm:-left-14 top-1.5 w-3.5 h-3.5 rounded-full bg-goldlight"></span>
+          <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
+            <span class="tabular font-display text-goldlight text-lg w-20 shrink-0">10:45</span>
+            <p class="text-white/90">Visit Kumano Shrine</p>
+          </div>
+        </li>
+        <li class="relative reveal">
+          <span class="trail-dot absolute -left-10 sm:-left-14 top-1.5 w-3.5 h-3.5 rounded-full bg-gold"></span>
+          <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
+            <span class="tabular font-display text-gold text-lg w-20 shrink-0">11:15</span>
+            <p class="text-white">Zen Walking on the Yusaka Trail</p>
+          </div>
+        </li>
+        <li class="relative reveal">
+          <span class="trail-dot absolute -left-10 sm:-left-14 top-1.5 w-3.5 h-3.5 rounded-full bg-goldlight"></span>
+          <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
+            <span class="tabular font-display text-goldlight text-lg w-20 shrink-0">12:15</span>
+            <p class="text-white/90">Zen Walking ends</p>
+          </div>
+        </li>
+        <li class="relative reveal">
+          <span class="trail-dot absolute -left-10 sm:-left-14 top-1.5 w-3.5 h-3.5 rounded-full bg-goldlight"></span>
+          <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
+            <span class="tabular font-display text-goldlight text-lg w-20 shrink-0">12:30</span>
+            <p class="text-white/90">Check-out &amp; sharing on the rooftop of HAKONE CALLING</p>
+          </div>
+        </li>
+        <li class="relative reveal">
+          <span class="trail-dot absolute -left-10 sm:-left-14 top-1.5 w-3.5 h-3.5 rounded-full bg-goldlight"></span>
+          <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
+            <span class="tabular font-display text-goldlight text-lg w-20 shrink-0">12:45</span>
+            <p class="text-white/90">Dismissal — end of tour</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== GUIDE ===================== -->
+<section id="guide" class="bg-paper">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
+    <p class="eyebrow uppercase mb-4 reveal">案内人 · Meet Your Guide</p>
+    <div class="grid md:grid-cols-[280px_1fr] gap-10 md:gap-16 items-start mt-6">
+      <div class="reveal flex md:block justify-center">
+        <div class="relative w-56 h-56 sm:w-64 sm:h-64 md:w-[280px] md:h-[280px] rounded-full overflow-hidden ring-4 ring-gold/70 ring-offset-4 ring-offset-paper">
+          <img src="images/guide.jpg"
+               alt="Portrait of Kohei, the Zen Walking Tour guide, in nature attire"
+               width="560" height="560" class="w-full h-full object-cover" />
+        </div>
+      </div>
+      <div class="reveal">
+        <h2 class="font-display text-2xl sm:text-3xl mb-6">Kohei — Your Guide</h2>
+        <div class="prose-copy space-y-4 text-ink/80 leading-8 text-[1.02rem]">
+          <p>Hi everyone! I'm Kohei, your guide for the Zen Walking Tour in Hakone.</p>
+          <p>I'm a former engineer and a father of one. In 2026, I followed my passion and became an independent nature guide. Alongside my career, I've spent years providing bodywork treatments focused on somatics and regulating the nervous system.</p>
+          <p>Drawing on my experience in the human mind-body connection, I am honored to lead you on this special meditative forest walk. Let's quiet our minds, reconnect with ourselves, and find peace deep in the beautiful forests of Hakone together.</p>
+          <p class="font-display italic text-forest text-lg">My English is still a work in progress, but I promise to guide you with all my heart and passion!</p>
+          <p>I look forward to sharing this mindful experience with you!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faq" class="bg-paper2">
+  <div class="max-w-3xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
+    <p class="eyebrow uppercase mb-4 reveal">よくある質問 · FAQ</p>
+    <h2 class="text-3xl sm:text-4xl mb-12 reveal">Good to Know</h2>
+
+    <div class="divide-y divide-ink/10 border-t border-b border-ink/10">
+
+      <div class="faq-item" data-open="false">
+        <button class="faq-trigger w-full flex items-center justify-between gap-4 text-left py-5" aria-expanded="false">
+          <span class="font-medium text-lg">Can I join the tour alone?</span>
+          <svg class="faq-icon shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v16M4 12h16"/></svg>
+        </button>
+        <div class="faq-panel"><div><p class="pb-5 text-ink/75 leading-relaxed">Absolutely! Solo travelers are more than welcome.</p></div></div>
+      </div>
+
+      <div class="faq-item" data-open="false">
+        <button class="faq-trigger w-full flex items-center justify-between gap-4 text-left py-5" aria-expanded="false">
+          <span class="font-medium text-lg">Can I leave my luggage with you during the tour?</span>
+          <svg class="faq-icon shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v16M4 12h16"/></svg>
+        </button>
+        <div class="faq-panel"><div><p class="pb-5 text-ink/75 leading-relaxed">Yes, we can securely store your luggage in our locked staff room during the tour.</p></div></div>
+      </div>
+
+      <div class="faq-item" data-open="false">
+        <button class="faq-trigger w-full flex items-center justify-between gap-4 text-left py-5" aria-expanded="false">
+          <span class="font-medium text-lg">I'm not very confident in my physical fitness. Can I still participate?</span>
+          <svg class="faq-icon shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v16M4 12h16"/></svg>
+        </button>
+        <div class="faq-panel"><div><p class="pb-5 text-ink/75 leading-relaxed">Yes, don't worry! We will be walking on mountain paths for about an hour at a relaxed, meditative pace. It is suitable for most fitness levels.</p></div></div>
+      </div>
+
+      <div class="faq-item" data-open="false">
+        <button class="faq-trigger w-full flex items-center justify-between gap-4 text-left py-5" aria-expanded="false">
+          <span class="font-medium text-lg">What should I wear and bring?</span>
+          <svg class="faq-icon shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v16M4 12h16"/></svg>
+        </button>
+        <div class="faq-panel"><div><p class="pb-5 text-ink/75 leading-relaxed">To protect against insects (especially in summer), we highly recommend wearing long sleeves and long pants. Any comfortable athletic shoes or sneakers are perfectly fine — hiking boots are not required. Please bring your own drink.</p></div></div>
+      </div>
+
+      <div class="faq-item" data-open="false">
+        <button class="faq-trigger w-full flex items-center justify-between gap-4 text-left py-5" aria-expanded="false">
+          <span class="font-medium text-lg">What happens if it rains?</span>
+          <svg class="faq-icon shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v16M4 12h16"/></svg>
+        </button>
+        <div class="faq-panel"><div><p class="pb-5 text-ink/75 leading-relaxed">The tour operates in light rain, as walking in a misty forest can be a beautiful, meditative experience. However, if severe weather forces us to cancel, we will notify you by 7:00 PM the evening before. In that case, no cancellation fees will apply.</p></div></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ACCESS ===================== -->
+<section id="access" class="bg-paper">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
+    <p class="eyebrow uppercase mb-4 reveal">アクセス · Access &amp; Location</p>
+    <h2 class="text-3xl sm:text-4xl mb-10 reveal max-w-xl">Where to Meet Us</h2>
+
+    <div class="grid md:grid-cols-[1.1fr_1fr] gap-8 items-stretch">
+      <div class="map-card reveal rounded-sm p-8 sm:p-10 flex flex-col justify-center min-h-[260px]">
+        <span class="eyebrow uppercase mb-3">Meeting Point</span>
+        <h3 class="font-display text-2xl mb-3">HAKONE CALLING — Rooftop</h3>
+        <p class="text-ink/75 leading-relaxed">A 3-minute walk from Hakone-Yumoto Station.</p>
+        <div class="mt-6 flex items-center gap-3 text-forest">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-6.5-7-11a7 7 0 1 1 14 0c0 4.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          <span class="text-sm font-medium">Hakone-Yumoto, Kanagawa</span>
+        </div>
+      </div>
+      <div class="reveal border border-ink/10 rounded-sm overflow-hidden min-h-[260px] flex items-center justify-center bg-paper2">
+        <div class="text-center px-6">
+          <svg class="mx-auto mb-4 text-forest/70" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 20l-5.447-2.724A1 1 0 0 1 3 16.382V5.618a1 1 0 0 1 1.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0 0 21 18.382V7.618a1 1 0 0 0-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+          <p class="text-ink/60 text-sm">Map — Hakone-Yumoto Station area</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TOUR DETAILS / CTA ===================== -->
+<section id="book" class="bg-forestdeep text-paper">
+  <div class="max-w-4xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
+    <div class="text-center mb-14 reveal">
+      <p class="eyebrow uppercase mb-4">ご予約 · Tour Details</p>
+      <h2 class="text-3xl sm:text-4xl text-white">Reserve Your Place on the Trail</h2>
+    </div>
+
+    <div class="reveal bg-paper text-ink rounded-sm overflow-hidden">
+      <div class="p-7 sm:p-10 text-center border-b border-ink/10 bg-paper2">
+        <p class="text-sm uppercase tracking-widest text-ink/50 mb-2">Grand Opening Offer — until September</p>
+        <div class="flex items-end justify-center gap-3">
+          <span class="font-display text-4xl sm:text-5xl text-forest">¥5,000</span>
+          <span class="text-ink/45 line-through text-lg mb-1">¥12,500</span>
+        </div>
+        <p class="text-xs text-ink/45 mt-2">Regular price ¥12,500 · per person</p>
+      </div>
+
+      <dl class="divide-y divide-ink/10 text-sm sm:text-base">
+        <div class="flex justify-between gap-4 px-7 sm:px-10 py-4">
+          <dt class="text-ink/55">Inclusions</dt>
+          <dd class="text-right font-medium">Guide fee, insurance &amp; HAKONE CALLING original Ema plaque</dd>
+        </div>
+        <div class="flex justify-between gap-4 px-7 sm:px-10 py-4">
+          <dt class="text-ink/55">Capacity</dt>
+          <dd class="text-right font-medium">Max 6 participants per session</dd>
+        </div>
+        <div class="flex justify-between gap-4 px-7 sm:px-10 py-4">
+          <dt class="text-ink/55">Age Limit</dt>
+          <dd class="text-right font-medium">10 years old and above</dd>
+        </div>
+        <div class="flex justify-between gap-4 px-7 sm:px-10 py-4">
+          <dt class="text-ink/55">Languages</dt>
+          <dd class="text-right font-medium">English, Japanese</dd>
+        </div>
+        <div class="flex justify-between gap-4 px-7 sm:px-10 py-4">
+          <dt class="text-ink/55">Meeting</dt>
+          <dd class="text-right font-medium">10:10 AM · HAKONE CALLING Rooftop</dd>
+        </div>
+        <div class="flex justify-between gap-4 px-7 sm:px-10 py-4">
+          <dt class="text-ink/55">Dismissal</dt>
+          <dd class="text-right font-medium">12:45 PM · same location</dd>
+        </div>
+      </dl>
+
+      <div class="p-7 sm:p-10 text-center">
+        <a href="#" class="inline-block w-full sm:w-auto bg-gold hover:bg-goldlight text-forestdeep font-semibold text-lg px-10 py-4 rounded-sm transition-colors">
+          Book Your Zen Experience Now
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="bg-forest text-paper/70">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
+    <p class="font-display text-paper">禅 Zen Walking Hakone</p>
+    <p>HAKONE CALLING · Hakone-Yumoto, Kanagawa, Japan</p>
+  </div>
+</footer>
+
+<script>
+  // Sticky nav background on scroll
+  const nav = document.getElementById('site-nav');
+  const onScroll = () => {
+    if (window.scrollY > 40) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Mobile menu toggle
+  const menuToggle = document.getElementById('menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const iconOpen = document.getElementById('menu-icon-open');
+  const iconClose = document.getElementById('menu-icon-close');
+  menuToggle.addEventListener('click', () => {
+    const isOpen = mobileMenu.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', String(isOpen));
+    iconOpen.classList.toggle('hidden', isOpen);
+    iconClose.classList.toggle('hidden', !isOpen);
+  });
+  mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      iconOpen.classList.remove('hidden');
+      iconClose.classList.add('hidden');
+    });
+  });
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const trigger = item.querySelector('.faq-trigger');
+    trigger.addEventListener('click', () => {
+      const isOpen = item.getAttribute('data-open') === 'true';
+      item.setAttribute('data-open', String(!isOpen));
+      trigger.setAttribute('aria-expanded', String(!isOpen));
+    });
+  });
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(el => io.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('is-visible'));
+  }
+</script>
+
+</body>
+</html>
