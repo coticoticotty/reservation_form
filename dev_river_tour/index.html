@@ -416,6 +416,21 @@
   let calendarViewDate = new Date();
   let selectedTourValue = null;
 
+  // --- 診断用デバッグ表示（URLに ?debug=1 を付けた時だけ画面下に状態を表示） ---
+  const DEBUG = new URLSearchParams(location.search).has('debug');
+  function debugLog(msg) {
+    if (!DEBUG) return;
+    console.log('[LIFF debug]', msg);
+    let box = document.getElementById('debugBox');
+    if (!box) {
+      box = document.createElement('div');
+      box.id = 'debugBox';
+      box.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#000;color:#0f0;font-size:11px;padding:8px;z-index:9999;white-space:pre-wrap;max-height:40vh;overflow:auto;font-family:monospace;';
+      document.body.appendChild(box);
+    }
+    box.textContent += msg + '\n';
+  }
+
 window.onload = function() {
     // 参加者フィールドの初期生成
     generateParticipantFields(1);
@@ -424,34 +439,46 @@ window.onload = function() {
     document.getElementById('calPrev').addEventListener('click', () => changeMonth(-1));
     document.getElementById('calNext').addEventListener('click', () => changeMonth(1));
 
+    debugLog('liff.init 開始');
+
     // LIFFの初期化
     liff.init({ liffId: "2010045353-fQ7AOUJA" }).then(() => {
       // LINEアプリ内から開かれているかどうかの判定を取得
       const isInLine = liff.isInClient();
-      
+      debugLog('liff.init 成功 / isInClient: ' + isInLine);
+
       // ツアー一覧の取得・描画関数を呼び出す（LINE内かどうかの判定を渡す）
       loadTours(isInLine);
 
       if (isInLine) {
-        if (!liff.isLoggedIn()) {
+        const loggedIn = liff.isLoggedIn();
+        debugLog('isLoggedIn: ' + loggedIn);
+        if (!loggedIn) {
+          debugLog('未ログインのため liff.login() を実行します');
           liff.login();
           return;
         }
-        
+
         // LINEアプリ内から開かれた場合の処理
         liff.getProfile().then(profile => {
+          debugLog('getProfile 成功: ' + profile.userId);
           document.getElementById('lineUserId').value = profile.userId;
           document.getElementById('bookingTool').value = "LINE";
-          
+
           // メール入力欄を隠し、必須を解除
           document.getElementById('email-section').style.display = 'none';
           document.getElementById('repEmailField').required = false;
+        }).catch(err => {
+          debugLog('getProfile 失敗: ' + err.message);
+          console.error("liff.getProfile failed", err);
         });
       } else {
+        debugLog('LINEクライアント外と判定 → Webフォーム表示のまま');
         // 通常のブラウザ（Webフォーム）の場合
         document.getElementById('bookingTool').value = "Webフォーム";
       }
     }).catch((err) => {
+      debugLog('liff.init 失敗: ' + err.message);
       console.error("LIFF Initialization failed", err);
       // LIFFの初期化に失敗した場合は、通常のWebフォーム（LINE外）としてツアーを取得
       loadTours(false);
