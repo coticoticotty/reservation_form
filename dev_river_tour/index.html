@@ -139,6 +139,7 @@
       gap: 5px;
     }
     .cal-cell {
+      position: relative;
       aspect-ratio: 1;
       display: flex;
       flex-direction: column;
@@ -187,11 +188,37 @@
     }
     .cal-cell.sold-out .cal-day { text-decoration: line-through; }
     .cal-cell.sold-out .cal-badge { color: #c3c7c3; }
+    .cal-line-dot {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #8f7fc7;
+      border: 1px solid #fff;
+    }
     .calendar-empty {
       text-align: center;
       font-size: 0.85em;
       color: #9aa5a1;
       margin: 14px 0 2px;
+    }
+    .calendar-legend {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 0.75em;
+      color: #8a8a8a;
+      margin-top: 12px;
+    }
+    .calendar-legend .legend-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #8f7fc7;
+      display: inline-block;
     }
     .selected-tour-info {
       margin-top: 12px;
@@ -287,6 +314,9 @@
           </div>
           <div class="calendar-grid" id="calendarGrid"></div>
           <p class="calendar-empty" id="calendarEmpty" style="display:none;"></p>
+          <p class="calendar-legend" id="calendarLegend" style="display:none;">
+            <span class="legend-dot"></span> リピーター限定
+          </p>
         </div>
         <div class="selected-tour-info" id="selectedTourInfo" style="display:none;"></div>
         <p class="field-error" id="tourError" style="display:none;">参加希望日を選択してください</p>
@@ -562,6 +592,12 @@ window.onload = function() {
         }
         if (badgeEl.textContent) cell.appendChild(badgeEl);
 
+        if (tour.isLineOnly) {
+          const dot = document.createElement('span');
+          dot.className = 'cal-line-dot';
+          cell.appendChild(dot);
+        }
+
         if (!tour.disabled) {
           if (tour.value === selectedTourValue) cell.classList.add('selected');
           cell.addEventListener('click', () => selectTourDate(tour.value));
@@ -582,6 +618,9 @@ window.onload = function() {
     } else {
       emptyMsg.style.display = 'none';
     }
+
+    const legend = document.getElementById('calendarLegend');
+    legend.style.display = monthTours.some(t => t.isLineOnly) ? 'flex' : 'none';
   }
 
   function changeMonth(delta) {
