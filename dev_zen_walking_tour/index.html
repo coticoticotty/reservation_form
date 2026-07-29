@@ -493,7 +493,7 @@
     calendarYear = now.getFullYear();
     calendarMonth = now.getMonth();
     minCalMonth = calendarYear * 12 + calendarMonth;
-    maxCalMonth = minCalMonth + 1; // matches backend: today through end of next month
+    maxCalMonth = minCalMonth; // no upper bound on backend anymore; extended once tour data loads
 
     renderCalendar();
 
@@ -514,6 +514,12 @@
       .then(options => {
         tourData = options;
         buildToursByDate();
+        maxCalMonth = tourData.length
+          ? (function() {
+              const maxDate = new Date(Math.max.apply(null, tourData.map(function(t) { return t.rawDate; })));
+              return maxDate.getFullYear() * 12 + maxDate.getMonth();
+            })()
+          : minCalMonth;
         document.getElementById('calendarStatus').style.display = 'none';
         renderCalendar();
       })
