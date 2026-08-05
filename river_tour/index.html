@@ -229,6 +229,21 @@
       color: #0f6d68;
       font-weight: 500;
     }
+    .waitlist-note {
+      margin-top: 12px;
+      padding: 12px 14px;
+      background: var(--mist);
+      border-radius: 8px;
+      font-size: 0.85em;
+      color: var(--charcoal);
+      text-align: center;
+      line-height: 1.6;
+    }
+    .waitlist-note a {
+      color: var(--turquoise);
+      font-weight: 600;
+      text-decoration: underline;
+    }
     .field-error {
       color: #c0392b;
       font-size: 0.85em;
@@ -318,6 +333,10 @@
             <span class="legend-dot"></span> リピーター限定
           </p>
         </div>
+        <p class="waitlist-note" id="waitlistNote" style="display:none;">
+          満席の日程が多く恐れ入ります。<br>
+          <a href="https://forms.gle/PbtqpU3UjDDqpyxc8" target="_blank" rel="noopener noreferrer">キャンセル待ちフォーム</a>もぜひご利用ください。
+        </p>
         <div class="selected-tour-info" id="selectedTourInfo" style="display:none;"></div>
         <p class="field-error" id="tourError" style="display:none;">参加希望日を選択してください</p>
         <input type="hidden" id="tourName" name="tourName">
@@ -448,6 +467,7 @@
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script>
   const GAS_API_URL = "https://script.google.com/macros/s/AKfycbwdshjL62XbYvK992ckTqhNIqoLPSOkYzoOcROueVT8yg19n89JG7DnpVL0SHcqtTtw8g/exec";
+  const WAITLIST_THRESHOLD = 10; // 満席の日程がこの件数以上になったらキャンセル待ち案内を表示
   let tourData = [];
   let filteredTours = [];
   let calendarViewDate = new Date();
@@ -510,6 +530,11 @@ window.onload = function() {
           const first = new Date(filteredTours[0].rawDate);
           calendarViewDate = new Date(first.getFullYear(), first.getMonth(), 1);
         }
+
+        // 満席の日程が一定数以上ある場合のみキャンセル待ち案内を表示
+        const soldOutCount = filteredTours.filter(t => t.disabled).length;
+        document.getElementById('waitlistNote').style.display = soldOutCount >= WAITLIST_THRESHOLD ? 'block' : 'none';
+
         renderCalendar();
       })
       .catch(err => {
