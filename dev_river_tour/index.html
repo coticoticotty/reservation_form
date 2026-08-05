@@ -333,7 +333,7 @@
             <span class="legend-dot"></span> リピーター限定
           </p>
         </div>
-        <p class="waitlist-note">
+        <p class="waitlist-note" id="waitlistNote" style="display:none;">
           満席の日程が多く恐れ入ります。<br>
           <a href="https://forms.gle/PbtqpU3UjDDqpyxc8" target="_blank" rel="noopener noreferrer">キャンセル待ちフォーム</a>もぜひご利用ください。
         </p>
@@ -460,6 +460,7 @@
 <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 <script>
   const GAS_API_URL = "https://script.google.com/macros/s/AKfycbybpSwSnx1e2sy89IQpjwV2Ye99cXXSqg6kGMAZ21joBcpj7FC2Ujif5QhbDXVeewsB/exec";
+  const WAITLIST_THRESHOLD = 10; // 満席の日程がこの件数以上になったらキャンセル待ち案内を表示
   let tourData = [];
   let filteredTours = [];
   let calendarViewDate = new Date();
@@ -549,6 +550,11 @@ window.onload = function() {
           const first = new Date(filteredTours[0].rawDate);
           calendarViewDate = new Date(first.getFullYear(), first.getMonth(), 1);
         }
+
+        // 満席の日程が一定数以上ある場合のみキャンセル待ち案内を表示
+        const soldOutCount = filteredTours.filter(t => t.disabled).length;
+        document.getElementById('waitlistNote').style.display = soldOutCount >= WAITLIST_THRESHOLD ? 'block' : 'none';
+
         renderCalendar();
       })
       .catch(err => {
