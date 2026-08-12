@@ -596,7 +596,7 @@ window.onload = function() {
   };
 
   // --- ツアー一覧を取得してカレンダーを描画する関数 ---
-  function loadTours(isInLine) {
+  function loadTours(isInLine, isRetry) {
     fetch(GAS_API_URL + "?action=getAvailableTours")
       .then(res => res.json())
       .then(options => {
@@ -619,7 +619,12 @@ window.onload = function() {
       })
       .catch(err => {
         console.error(err);
-        alert("ツアー一覧の取得に失敗しました");
+        if (!isRetry) {
+          // GASが一時的に失敗することがあるため、1回だけ自動で再試行する
+          setTimeout(() => loadTours(isInLine, true), 1000);
+        } else {
+          alert("ツアー一覧の取得に失敗しました。時間をおいて再度お試しください。");
+        }
       });
   }
 
