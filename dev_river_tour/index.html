@@ -316,6 +316,18 @@
         <input type="tel" name="repPhone" pattern="^[0-9\-]+$" title="数字とハイフンのみ入力可能です" required>
       </div>
 
+      <div class="payment-group">
+        <label>移動手段</label>
+        <div class="form-check">
+          <input type="radio" name="transportMethod" id="transportStation" value="新松田駅集合" checked>
+          <label for="transportStation">新松田駅集合（ガイドの車で移動）</label>
+        </div>
+        <div class="form-check">
+          <input type="radio" name="transportMethod" id="transportOnsite" value="車で現地集合">
+          <label for="transportOnsite">車で現地集合</label>
+        </div>
+      </div>
+
       <div class="input-group">
         <label>参加希望日</label>
         <div class="calendar-wrap">
@@ -342,18 +354,6 @@
         <input type="hidden" id="tourName" name="tourName">
         <input type="hidden" id="tourDate" name="tourDate">
         <input type="hidden" id="tourValue" name="tourId">
-      </div>
-
-      <div class="payment-group">
-        <label>移動手段</label>
-        <div class="form-check">
-          <input type="radio" name="transportMethod" id="transportStation" value="新松田駅集合" checked>
-          <label for="transportStation">新松田駅集合（ガイドの車で移動）</label>
-        </div>
-        <div class="form-check">
-          <input type="radio" name="transportMethod" id="transportOnsite" value="車で現地集合">
-          <label for="transportOnsite">車で現地集合</label>
-        </div>
       </div>
 
       <div class="payment-group">
@@ -502,9 +502,37 @@ window.onload = function() {
     document.getElementById('calPrev').addEventListener('click', () => changeMonth(-1));
     document.getElementById('calNext').addEventListener('click', () => changeMonth(1));
 
-    // 移動手段の切り替えで参加人数の上限を再計算
+    // 移動手段の切り替えでカレンダーの残席表示と参加人数の上限を再計算
     document.querySelectorAll('input[name="transportMethod"]').forEach(radio => {
       radio.addEventListener('change', () => {
+        if (selectedTourObj) {
+          const method = getSelectedTransportMethod();
+          const remaining = method === '車で現地集合' ? selectedTourObj.remainingOnsite : selectedTourObj.remainingStation;
+          if (remaining <= 0) {
+            // 選択済みの日程がこの移動手段では満席のため選択を解除
+            selectedTourValue = null;
+            selectedTourObj = null;
+            document.getElementById('tourName').value = '';
+            document.getElementById('tourDate').value = '';
+            document.getElementById('tourValue').value = '';
+            document.getElementById('selectedTourInfo').style.display = 'none';
+            document.getElementById('tourError').style.display = 'block';
+
+            // 参加人数の選択肢と案内文もデフォルトに戻す
+            const countSelect = document.getElementById('countSelect');
+            countSelect.innerHTML = '';
+            for (let n = 1; n <= 4; n++) {
+              const opt = document.createElement('option');
+              opt.value = n;
+              opt.textContent = n + '名';
+              countSelect.appendChild(opt);
+            }
+            countSelect.value = 1;
+            document.getElementById('countHint').style.display = 'none';
+            generateParticipantFields(1);
+          }
+        }
+        renderCalendar();
         if (selectedTourObj) updateParticipantCountOptions();
       });
     });
@@ -623,18 +651,20 @@ window.onload = function() {
       cell.appendChild(dayEl);
 
       if (tour) {
-        const hasRemaining = typeof tour.remainingStation === 'number' && typeof tour.remainingOnsite === 'number';
-        const minRemaining = hasRemaining ? Math.min(tour.remainingStation, tour.remainingOnsite) : null;
-        const isLowStock = hasRemaining && !tour.disabled && minRemaining > 0 && minRemaining <= 3;
+        const method = getSelectedTransportMethod();
+        const remaining = method === '車で現地集合' ? tour.remainingOnsite : tour.remainingStation;
+        const hasRemaining = typeof remaining === 'number';
+        const soldOut = hasRemaining ? remaining <= 0 : tour.disabled;
+        const isLowStock = hasRemaining && !soldOut && remaining <= 3;
 
-        cell.className = 'cal-cell ' + (tour.disabled ? 'sold-out' : 'has-tour') + (isLowStock ? ' low-stock' : '');
+        cell.className = 'cal-cell ' + (soldOut ? 'sold-out' : 'has-tour') + (isLowStock ? ' low-stock' : '');
 
         const badgeEl = document.createElement('span');
         badgeEl.className = 'cal-badge';
-        if (tour.disabled) {
+        if (soldOut) {
           badgeEl.textContent = '満席';
         } else if (isLowStock) {
-          badgeEl.textContent = '残' + minRemaining;
+          badgeEl.textContent = '残' + remaining;
         }
         if (badgeEl.textContent) cell.appendChild(badgeEl);
 
@@ -644,7 +674,7 @@ window.onload = function() {
           cell.appendChild(dot);
         }
 
-        if (!tour.disabled) {
+        if (!soldOut) {
           if (tour.value === selectedTourValue) cell.classList.add('selected');
           cell.addEventListener('click', () => selectTourDate(tour.value));
         }
