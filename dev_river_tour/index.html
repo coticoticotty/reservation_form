@@ -612,7 +612,7 @@ window.onload = function() {
         }
 
         // 満席の日程が一定数以上ある場合のみキャンセル待ち案内を表示
-        const soldOutCount = filteredTours.filter(t => t.disabled).length;
+        const soldOutCount = filteredTours.filter(t => t.remainingStation <= 0).length;
         document.getElementById('waitlistNote').style.display = soldOutCount >= WAITLIST_THRESHOLD ? 'block' : 'none';
 
         renderCalendar();
