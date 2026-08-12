@@ -345,6 +345,18 @@
       </div>
 
       <div class="payment-group">
+        <label>移動手段</label>
+        <div class="form-check">
+          <input type="radio" name="transportMethod" id="transportStation" value="新松田駅集合" checked>
+          <label for="transportStation">新松田駅集合（ガイドの車で移動）</label>
+        </div>
+        <div class="form-check">
+          <input type="radio" name="transportMethod" id="transportOnsite" value="車で現地集合">
+          <label for="transportOnsite">車で現地集合</label>
+        </div>
+      </div>
+
+      <div class="payment-group">
         <label>お支払い方法</label>
         <div class="form-check">
           <input type="radio" name="paymentMethod" id="credit" value="クレジットカード" checked>
@@ -465,6 +477,7 @@
   let filteredTours = [];
   let calendarViewDate = new Date();
   let selectedTourValue = null;
+  let selectedTourObj = null;
 
   // --- 診断用デバッグ表示（URLに ?debug=1 を付けた時だけ画面下に状態を表示） ---
   const DEBUG = new URLSearchParams(location.search).has('debug');
@@ -488,6 +501,13 @@ window.onload = function() {
     // カレンダーの月送りボタン
     document.getElementById('calPrev').addEventListener('click', () => changeMonth(-1));
     document.getElementById('calNext').addEventListener('click', () => changeMonth(1));
+
+    // 移動手段の切り替えで参加人数の上限を再計算
+    document.querySelectorAll('input[name="transportMethod"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        if (selectedTourObj) updateParticipantCountOptions();
+      });
+    });
 
     debugLog('liff.init 開始');
 
@@ -603,8 +623,9 @@ window.onload = function() {
       cell.appendChild(dayEl);
 
       if (tour) {
-        const hasRemaining = typeof tour.remaining === 'number';
-        const isLowStock = hasRemaining && !tour.disabled && tour.remaining > 0 && tour.remaining <= 3;
+        const hasRemaining = typeof tour.remainingStation === 'number' && typeof tour.remainingOnsite === 'number';
+        const minRemaining = hasRemaining ? Math.min(tour.remainingStation, tour.remainingOnsite) : null;
+        const isLowStock = hasRemaining && !tour.disabled && minRemaining > 0 && minRemaining <= 3;
 
         cell.className = 'cal-cell ' + (tour.disabled ? 'sold-out' : 'has-tour') + (isLowStock ? ' low-stock' : '');
 
@@ -613,7 +634,7 @@ window.onload = function() {
         if (tour.disabled) {
           badgeEl.textContent = '満席';
         } else if (isLowStock) {
-          badgeEl.textContent = '残' + tour.remaining;
+          badgeEl.textContent = '残' + minRemaining;
         }
         if (badgeEl.textContent) cell.appendChild(badgeEl);
 
@@ -658,6 +679,7 @@ window.onload = function() {
     if (!tour || tour.disabled) return;
 
     selectedTourValue = value;
+    selectedTourObj = tour;
     document.getElementById('tourName').value = tour.tourName;
     document.getElementById('tourDate').value = tour.date;
     document.getElementById('tourValue').value = tour.value;
@@ -667,16 +689,26 @@ window.onload = function() {
     info.style.display = 'block';
     info.textContent = '選択中： ' + tour.label;
 
-    updateParticipantCountOptions(tour);
+    updateParticipantCountOptions();
     renderCalendar();
   }
 
-  // 選択したツアーの残席数に合わせて「参加人数」の選択肢を制限する
-  function updateParticipantCountOptions(tour) {
+  function getSelectedTransportMethod() {
+    const checked = document.querySelector('input[name="transportMethod"]:checked');
+    return checked ? checked.value : '新松田駅集合';
+  }
+
+  // 選択したツアー・移動手段の残席数に合わせて「参加人数」の選択肢を制限する
+  function updateParticipantCountOptions() {
+    const tour = selectedTourObj;
+    if (!tour) return;
+
     const countSelect = document.getElementById('countSelect');
     const countHint = document.getElementById('countHint');
-    const hasRemaining = typeof tour.remaining === 'number';
-    const maxAllowed = hasRemaining ? Math.max(1, Math.min(4, tour.remaining)) : 4;
+    const method = getSelectedTransportMethod();
+    const remaining = method === '車で現地集合' ? tour.remainingOnsite : tour.remainingStation;
+    const hasRemaining = typeof remaining === 'number';
+    const maxAllowed = hasRemaining ? Math.max(1, Math.min(4, remaining)) : 4;
 
     const currentValue = parseInt(countSelect.value, 10) || 1;
 
@@ -688,8 +720,8 @@ window.onload = function() {
       countSelect.appendChild(opt);
     }
 
-    if (hasRemaining && tour.remaining < 4) {
-      countHint.textContent = `この日程は残り${tour.remaining}名様までご予約いただけます。`;
+    if (hasRemaining && remaining < 4) {
+      countHint.textContent = `この日程・移動手段では残り${remaining}名様までご予約いただけます。`;
       countHint.style.display = 'block';
     } else {
       countHint.style.display = 'none';
@@ -762,6 +794,7 @@ window.onload = function() {
       repPhone: this.repPhone.value.trim().replace(/[^0-9-]/g, ''),
       tourDate: this.tourDate.value,
       tourName: this.tourName.value,
+      transportMethod: getSelectedTransportMethod(),
       paymentMethod: this.paymentMethod.value,
       bookingTool: document.getElementById('bookingTool').value,
       lineUserId: document.getElementById('lineUserId').value,
