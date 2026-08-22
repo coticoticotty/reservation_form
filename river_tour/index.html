@@ -486,7 +486,6 @@
   let filteredTours = [];
   let calendarViewDate = new Date();
   let selectedTourValue = null;
-  let selectedTourObj = null;
 
 window.onload = function() {
     // 移動手段のデフォルトを明示的に「新松田駅集合」にする
@@ -501,45 +500,6 @@ window.onload = function() {
     // カレンダーの月送りボタン
     document.getElementById('calPrev').addEventListener('click', () => changeMonth(-1));
     document.getElementById('calNext').addEventListener('click', () => changeMonth(1));
-
-    // 移動手段の切り替えでカレンダーの残席表示と参加人数の上限を再計算
-    document.querySelectorAll('input[name="transportMethod"]').forEach(radio => {
-      radio.addEventListener('change', () => {
-        if (selectedTourObj) {
-          const method = getSelectedTransportMethod();
-          const remaining = method === '車で現地集合' ? selectedTourObj.remainingOnsite : selectedTourObj.remainingStation;
-          if (remaining <= 0) {
-            // 選択済みの日程がこの移動手段では満席のため選択を解除
-            selectedTourValue = null;
-            selectedTourObj = null;
-            document.getElementById('tourName').value = '';
-            document.getElementById('tourDate').value = '';
-            document.getElementById('tourValue').value = '';
-            document.getElementById('selectedTourInfo').style.display = 'none';
-            document.getElementById('tourError').style.display = 'block';
-
-            // 参加人数の選択肢と案内文もデフォルトに戻す
-            const countSelect = document.getElementById('countSelect');
-            countSelect.innerHTML = '';
-            for (let n = 1; n <= 4; n++) {
-              const opt = document.createElement('option');
-              opt.value = n;
-              opt.textContent = n + '名';
-              countSelect.appendChild(opt);
-            }
-            countSelect.value = 1;
-            document.getElementById('countHint').style.display = 'none';
-            document.getElementById('countLabel').textContent = '参加人数 (1〜4名)';
-            generateParticipantFields(1);
-          }
-        }
-        renderCalendar();
-        if (selectedTourObj) {
-          updateSelectedTourInfoText();
-          updateParticipantCountOptions();
-        }
-      });
-    });
 
     // LIFFの初期化
     liff.init({ liffId: "2010102166-omqmt59M" }).then(() => {
@@ -595,7 +555,7 @@ window.onload = function() {
         }
 
         // 満席の日程が一定数以上ある場合のみキャンセル待ち案内を表示
-        const soldOutCount = filteredTours.filter(t => t.remainingStation <= 0).length;
+        const soldOutCount = filteredTours.filter(t => t.disabled).length;
         document.getElementById('waitlistNote').style.display = soldOutCount >= WAITLIST_THRESHOLD ? 'block' : 'none';
 
         renderCalendar();
@@ -651,20 +611,17 @@ window.onload = function() {
       cell.appendChild(dayEl);
 
       if (tour) {
-        const method = getSelectedTransportMethod();
-        const remaining = method === '車で現地集合' ? tour.remainingOnsite : tour.remainingStation;
-        const hasRemaining = typeof remaining === 'number';
-        const soldOut = hasRemaining ? remaining <= 0 : tour.disabled;
-        const isLowStock = hasRemaining && !soldOut && remaining <= 3;
+        const hasRemaining = typeof tour.remaining === 'number';
+        const isLowStock = hasRemaining && !tour.disabled && tour.remaining > 0 && tour.remaining <= 3;
 
-        cell.className = 'cal-cell ' + (soldOut ? 'sold-out' : 'has-tour') + (isLowStock ? ' low-stock' : '');
+        cell.className = 'cal-cell ' + (tour.disabled ? 'sold-out' : 'has-tour') + (isLowStock ? ' low-stock' : '');
 
         const badgeEl = document.createElement('span');
         badgeEl.className = 'cal-badge';
-        if (soldOut) {
+        if (tour.disabled) {
           badgeEl.textContent = '満席';
         } else if (isLowStock) {
-          badgeEl.textContent = '残' + remaining;
+          badgeEl.textContent = '残' + tour.remaining;
         }
         if (badgeEl.textContent) cell.appendChild(badgeEl);
 
@@ -674,7 +631,7 @@ window.onload = function() {
           cell.appendChild(dot);
         }
 
-        if (!soldOut) {
+        if (!tour.disabled) {
           if (tour.value === selectedTourValue) cell.classList.add('selected');
           cell.addEventListener('click', () => selectTourDate(tour.value));
         }
@@ -709,14 +666,16 @@ window.onload = function() {
     if (!tour || tour.disabled) return;
 
     selectedTourValue = value;
-    selectedTourObj = tour;
     document.getElementById('tourName').value = tour.tourName;
     document.getElementById('tourDate').value = tour.date;
     document.getElementById('tourValue').value = tour.value;
     document.getElementById('tourError').style.display = 'none';
 
-    updateSelectedTourInfoText();
-    updateParticipantCountOptions();
+    const info = document.getElementById('selectedTourInfo');
+    info.style.display = 'block';
+    info.textContent = '選択中： ' + tour.label;
+
+    updateParticipantCountOptions(tour);
     renderCalendar();
   }
 
@@ -725,34 +684,12 @@ window.onload = function() {
     return checked ? checked.value : '新松田駅集合';
   }
 
-  // 選択中のツアー・移動手段に合わせて「選択中：」の残席表記を更新する
-  function updateSelectedTourInfoText() {
-    const tour = selectedTourObj;
-    if (!tour) return;
-
-    const method = getSelectedTransportMethod();
-    const remaining = method === '車で現地集合' ? tour.remainingOnsite : tour.remainingStation;
-    const remainingText = remaining <= 3 ? `【残${remaining}名】 ` : '';
-
-    const info = document.getElementById('selectedTourInfo');
-    info.style.display = 'block';
-    info.textContent = `選択中： ${remainingText}${tour.date} ${tour.tourName}（${method}）`;
-  }
-
-  // 選択したツアー・移動手段の残席数に合わせて「参加人数」の選択肢を制限する
-  function updateParticipantCountOptions() {
-    const tour = selectedTourObj;
-    if (!tour) return;
-
+  // 選択したツアーの残席数に合わせて「参加人数」の選択肢を制限する
+  function updateParticipantCountOptions(tour) {
     const countSelect = document.getElementById('countSelect');
     const countHint = document.getElementById('countHint');
-    const method = getSelectedTransportMethod();
-    const remaining = method === '車で現地集合' ? tour.remainingOnsite : tour.remainingStation;
-    const hasRemaining = typeof remaining === 'number';
-    const capForMethod = method === '車で現地集合' ? 5 : 4;
-    const maxAllowed = hasRemaining ? Math.max(1, Math.min(capForMethod, remaining)) : capForMethod;
-
-    document.getElementById('countLabel').textContent = `参加人数 (1〜${capForMethod}名)`;
+    const hasRemaining = typeof tour.remaining === 'number';
+    const maxAllowed = hasRemaining ? Math.max(1, Math.min(4, tour.remaining)) : 4;
 
     const currentValue = parseInt(countSelect.value, 10) || 1;
 
@@ -764,8 +701,8 @@ window.onload = function() {
       countSelect.appendChild(opt);
     }
 
-    if (hasRemaining && remaining < capForMethod) {
-      countHint.textContent = `この日程・移動手段では残り${remaining}名様までご予約いただけます。`;
+    if (hasRemaining && tour.remaining < 4) {
+      countHint.textContent = `この日程は残り${tour.remaining}名様までご予約いただけます。`;
       countHint.style.display = 'block';
     } else {
       countHint.style.display = 'none';
