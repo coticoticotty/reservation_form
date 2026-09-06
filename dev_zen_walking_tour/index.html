@@ -509,6 +509,13 @@
     });
 
     // 1. ツアー一覧の取得（既存処理）
+    loadTours();
+
+    generateParticipantFields(1);
+
+  };
+
+  function loadTours(isRetry) {
     fetch(GAS_API_URL + "?action=getAvailableTours")
       .then(res => res.json())
       .then(options => {
@@ -525,13 +532,15 @@
       })
       .catch(err => {
         console.error(err);
-        document.getElementById('calendarStatus').textContent = 'Failed to load tour availability. Please reload the page.';
-        alert("Failed to get the tour list");
+        if (!isRetry) {
+          // GASが一時的に失敗することがあるため、1回だけ自動で再試行する
+          setTimeout(() => loadTours(true), 1000);
+        } else {
+          document.getElementById('calendarStatus').textContent = 'Failed to load tour availability. Please reload the page.';
+          alert("Failed to get the tour list. Please try again later.");
+        }
       });
-
-    generateParticipantFields(1);
-
-  };
+  }
 
   function pad2(n) { return String(n).padStart(2, '0'); }
 
