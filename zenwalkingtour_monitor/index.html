@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>禅ウォーキング & マインドフルネスツアー | 箱根</title>
+<meta name="description" content="箱根・湯坂路で行う瞑想的な禅ウォーキング体験。少人数制のモニターツアーを1,000円で実施中。" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Old+Mincho:wght@400;500;600;700&family=Zen+Kaku+Gothic+New:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          ink: '#2b2a25',
+          paper: '#f5f1e4',
+          paper2: '#ece3cd',
+          forest: '#24382c',
+          forestdeep: '#16241c',
+          sand: '#d9cba6',
+          sanddark: '#c2b184',
+          gold: '#b8863f',
+          goldlight: '#d4ab5f',
+        },
+        fontFamily: {
+          display: ['"Zen Old Mincho"', 'serif'],
+          body: ['"Zen Kaku Gothic New"', 'sans-serif'],
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  :root{
+    --ink:#2b2a25;
+    --paper:#f5f1e4;
+    --paper-2:#ece3cd;
+    --forest:#24382c;
+    --forest-deep:#16241c;
+    --sand:#d9cba6;
+    --gold:#b8863f;
+    --gold-light:#d4ab5f;
+  }
+
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Zen Kaku Gothic New', sans-serif;
+  }
+
+  h1,h2,h3,.font-display{
+    font-family:'Zen Old Mincho', serif;
+    text-wrap:balance;
+  }
+
+  .prose-copy{
+    max-width:38rem;
+  }
+
+  .eyebrow{
+    font-family:'Zen Old Mincho', serif;
+    letter-spacing:0.28em;
+    font-size:0.72rem;
+    color:var(--gold);
+  }
+
+  .seam{
+    height:1px;
+    background:linear-gradient(90deg, transparent, rgba(43,42,37,0.18) 20%, rgba(43,42,37,0.18) 80%, transparent);
+  }
+
+  .ema-badge{
+    width:3.25rem;
+    height:3.25rem;
+    background:var(--forest);
+    color:var(--gold-light);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-family:'Zen Old Mincho', serif;
+    font-size:1.35rem;
+    clip-path: polygon(50% 0%, 100% 28%, 100% 100%, 0% 100%, 0% 28%);
+    box-shadow:0 6px 16px -6px rgba(22,36,28,0.45);
+    flex-shrink:0;
+  }
+
+  .reveal{
+    opacity:0;
+    transform:translateY(18px);
+    transition:opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.is-visible{
+    opacity:1;
+    transform:translateY(0);
+  }
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1; transform:none; transition:none;}
+  }
+
+  .trail-line{
+    background:linear-gradient(to bottom, var(--gold), var(--sand-dark, var(--sand)));
+  }
+  .trail-dot{
+    box-shadow:0 0 0 4px var(--paper), 0 0 0 5px rgba(184,134,63,0.4);
+  }
+
+  .faq-panel{
+    display:grid;
+    grid-template-rows:0fr;
+    transition:grid-template-rows 0.45s ease;
+  }
+  .faq-panel > div{overflow:hidden;}
+  .faq-item[data-open="true"] .faq-panel{grid-template-rows:1fr;}
+  .faq-item[data-open="true"] .faq-icon{transform:rotate(45deg);}
+  .faq-icon{transition:transform 0.35s ease;}
+
+  #site-nav{transition:background-color 0.4s ease, box-shadow 0.4s ease, backdrop-filter 0.4s ease;}
+  #site-nav.scrolled{
+    background-color:rgba(22,36,28,0.94);
+    backdrop-filter:blur(6px);
+    box-shadow:0 8px 24px -12px rgba(0,0,0,0.4);
+  }
+
+  a:focus-visible, button:focus-visible, summary:focus-visible{
+    outline:2px solid var(--gold);
+    outline-offset:3px;
+  }
+
+  .tabular{font-variant-numeric:tabular-nums;}
+
+  #mobile-menu{
+    max-height:0;
+    overflow:hidden;
+    transition:max-height 0.4s ease;
+  }
+  #mobile-menu.open{max-height:20rem;}
+
+  .map-card{
+    background:
+      repeating-linear-gradient(135deg, rgba(43,42,37,0.035) 0 2px, transparent 2px 14px),
+      var(--paper-2);
+    border:1px dashed rgba(43,42,37,0.35);
+  }
+
+  .monitor-badge{
+    background:var(--gold);
+    color:var(--forestdeep);
+  }
+</style>
+</head>
+
+<body class="antialiased">
+
+<!-- ===================== NAV ===================== -->
+<header id="site-nav" class="fixed top-0 left-0 right-0 z-50">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8 flex items-center justify-between h-16 sm:h-20">
+    <a href="#top" class="font-display text-white text-lg sm:text-xl tracking-wide">
+      禅 <span class="hidden sm:inline">Zen Walking</span> Hakone
+    </a>
+    <nav class="hidden md:flex items-center gap-8 text-sm text-white/85">
+      <a href="#concept" class="hover:text-goldlight transition-colors">コンセプト</a>
+      <a href="#highlights" class="hover:text-goldlight transition-colors">見どころ</a>
+      <a href="#itinerary" class="hover:text-goldlight transition-colors">旅程</a>
+      <a href="#guide" class="hover:text-goldlight transition-colors">ガイド</a>
+      <a href="#faq" class="hover:text-goldlight transition-colors">よくある質問</a>
+      <a href="#book" class="bg-gold hover:bg-goldlight text-forestdeep font-semibold px-5 py-2 rounded-sm transition-colors">お申し込み</a>
+    </nav>
+    <button id="menu-toggle" class="md:hidden text-white p-2" aria-expanded="false" aria-controls="mobile-menu" aria-label="メニューを開閉する">
+      <svg id="menu-icon-open" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      <svg id="menu-icon-close" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="hidden"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div id="mobile-menu" class="md:hidden bg-forestdeep/98 text-white/90">
+    <nav class="flex flex-col px-5 pb-5 gap-4 text-sm">
+      <a href="#concept" class="py-1">コンセプト</a>
+      <a href="#highlights" class="py-1">見どころ</a>
+      <a href="#itinerary" class="py-1">旅程</a>
+      <a href="#guide" class="py-1">ガイド</a>
+      <a href="#faq" class="py-1">よくある質問</a>
+      <a href="#access" class="py-1">アクセス</a>
+      <a href="#book" class="inline-block bg-gold text-forestdeep font-semibold px-5 py-2 rounded-sm w-max mt-1">お申し込み</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ===================== HERO ===================== -->
+<section id="top" class="relative w-full">
+  <div class="relative w-full aspect-[16/9] max-h-[92vh] overflow-hidden">
+    <img
+      src="images/hero.jpg"
+      alt="箱根の静かな山道に木漏れ日が差し込む様子"
+      width="2000" height="1125"
+      class="w-full h-full object-cover"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-forestdeep/90 via-forestdeep/25 to-forestdeep/50"></div>
+    <div class="absolute inset-0 flex items-end sm:items-center">
+      <div class="max-w-6xl mx-auto px-5 sm:px-8 pb-12 sm:pb-0 w-full">
+        <p class="eyebrow text-goldlight uppercase mb-4 reveal">箱根 · 湯坂路</p>
+        <span class="monitor-badge inline-block text-xs font-semibold tracking-wide px-3 py-1 rounded-sm mb-4 reveal">モニターツアー実施中</span>
+        <h1 class="font-display text-white text-3xl sm:text-5xl lg:text-6xl leading-tight max-w-3xl reveal">
+          箱根の森で、心をととのえる。
+        </h1>
+        <p class="text-white/85 text-base sm:text-lg mt-5 max-w-xl font-light reveal">
+          瞑想的な禅ウォーキング体験
+        </p>
+        <div class="mt-8 flex flex-wrap items-center gap-4 reveal">
+          <a href="#book" class="inline-block bg-gold hover:bg-goldlight text-forestdeep font-semibold px-7 py-3 rounded-sm transition-colors">
+            モニターツアーに申し込む
+          </a>
+          <span class="text-white/70 text-sm">約2.5時間 · 定員6名 · 日本語</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CONCEPT ===================== -->
+<section id="concept" class="bg-paper">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
+    <div class="grid md:grid-cols-[0.9fr_1.1fr] gap-10 md:gap-16 items-start">
+      <div class="reveal">
+        <p class="eyebrow uppercase mb-4">禅 · コンセプト</p>
+        <h2 class="text-3xl sm:text-4xl leading-tight">頭を空っぽにして、五感を取り戻す</h2>
+      </div>
+      <div class="reveal">
+        <p class="prose-copy text-[1.05rem] leading-8 text-ink/85">
+          箱根の森の中で、頭をリセットし、五感を取り戻す時間を。情報過多な現代社会では、脳は常に刺激にさらされています。このツアーでは、約1,000年にわたり旅人や巡礼者に歩かれてきた歴史ある<span class="text-forest font-medium">湯坂路</span>を舞台に、「禅ウォーキング」を通して思考のノイズを鎮め、身体の感覚と改めて向き合う時間をご提供します。
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="seam max-w-6xl mx-auto"></div>
+</section>
+
+<!-- ===================== HIGHLIGHTS ===================== -->
+<section id="highlights" class="bg-paper">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
+    <div class="mb-14 reveal">
+      <p class="eyebrow uppercase mb-4">旅の見どころ</p>
+      <h2 class="text-3xl sm:text-4xl max-w-xl">道すがらの4つの時間</h2>
+    </div>
+
+    <div class="grid sm:grid-cols-2 gap-6 sm:gap-8">
+      <!-- Highlight 1 -->
+      <article class="reveal bg-paper2 rounded-sm overflow-hidden border border-ink/5">
+        <img src="images/highlight1.jpg"
+             alt="屋外で瞑想的なポーズをとり、呼吸法を行う様子"
+             width="1200" height="800" class="w-full h-52 sm:h-56 object-cover" />
+        <div class="p-6 sm:p-7">
+          <div class="flex items-start gap-4">
+            <span class="ema-badge">一</span>
+            <div>
+              <h3 class="font-display text-xl mb-2 mt-1">簡単な体操と瞑想</h3>
+              <p class="text-ink/75 leading-relaxed text-[0.95rem]">簡単な体操で身体をほぐし、短い瞑想で心を落ち着けます。</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Highlight 2 -->
+      <article class="reveal bg-paper2 rounded-sm overflow-hidden border border-ink/5">
+        <img src="images/highlight2.jpg"
+             alt="苔と森に囲まれた伝統的な鳥居"
+             width="1200" height="800" class="w-full h-52 sm:h-56 object-cover" />
+        <div class="p-6 sm:p-7">
+          <div class="flex items-start gap-4">
+            <span class="ema-badge">二</span>
+            <div>
+              <h3 class="font-display text-xl mb-2 mt-1">熊野神社への参拝</h3>
+              <p class="text-ink/75 leading-relaxed text-[0.95rem]">箱根温泉発祥の地とされる熊野神社で、静かに手を合わせます。</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Highlight 3 -->
+      <article class="reveal bg-paper2 rounded-sm overflow-hidden border border-ink/5">
+        <img src="images/highlight3.jpg"
+             alt="古い森の道をゆっくりと瞑想的に歩く足元"
+             width="1200" height="800" class="w-full h-52 sm:h-56 object-cover" />
+        <div class="p-6 sm:p-7">
+          <div class="flex items-start gap-4">
+            <span class="ema-badge">三</span>
+            <div>
+              <h3 class="font-display text-xl mb-2 mt-1">禅ウォーキング：湯坂路</h3>
+              <p class="text-ink/75 leading-relaxed text-[0.95rem]">足の裏の感覚に意識を向けながら歩く「禅ウォーキング」で、心を静めます。</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Highlight 4 -->
+      <article class="reveal bg-paper2 rounded-sm overflow-hidden border border-ink/5">
+        <img src="images/highlight4.jpg"
+             alt="伝統的な絵馬に手書きで書かれたメッセージのクローズアップ"
+             width="1200" height="800" class="w-full h-52 sm:h-56 object-cover" />
+        <div class="p-6 sm:p-7">
+          <div class="flex items-start gap-4">
+            <span class="ema-badge">四</span>
+            <div>
+              <h3 class="font-display text-xl mb-2 mt-1">クロージングサークル</h3>
+              <p class="text-ink/75 leading-relaxed text-[0.95rem]">ツアーで感じたことを伝統的な「絵馬」に書き留め、グループでシェアします。</p>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ITINERARY ===================== -->
+<section id="itinerary" class="bg-forestdeep text-paper">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
+    <div class="mb-16 reveal">
+      <p class="eyebrow uppercase mb-4">旅程</p>
+      <h2 class="text-3xl sm:text-4xl text-white max-w-xl">約2.5時間の道のり</h2>
+    </div>
+
+    <div class="relative pl-10 sm:pl-14">
+      <div class="trail-line absolute left-[7px] sm:left-[11px] top-2 bottom-2 w-[2px]"></div>
+
+      <ol class="space-y-10 sm:space-y-12">
+        <li class="relative reveal">
+          <span class="trail-dot absolute -left-10 sm:-left-14 top-1.5 w-3.5 h-3.5 rounded-full bg-goldlight"></span>
+          <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
+            <span class="tabular font-display text-goldlight text-lg w-20 shrink-0">10:10</span>
+            <p class="text-white/90"><a href="https://share.google/LPky7bV25CGYQiagT" target="_blank" rel="noopener noreferrer" class="underline decoration-goldlight/50 hover:decoration-goldlight">HAKONE CALLING</a> 玄関口に集合</p>
+          </div>
+        </li>
+        <li class="relative reveal">
+          <span class="trail-dot absolute -left-10 sm:-left-14 top-1.5 w-3.5 h-3.5 rounded-full bg-goldlight"></span>
+          <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
+            <span class="tabular font-display text-goldlight text-lg w-20 shrink-0">10:15</span>
+            <p class="text-white/90">プログラム開始 — 心を落ち着ける体操と簡単な瞑想</p>
+          </div>
+        </li>
+        <li class="relative reveal">
+          <span class="trail-dot absolute -left-10 sm:-left-14 top-1.5 w-3.5 h-3.5 rounded-full bg-goldlight"></span>
+          <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
+            <span class="tabular font-display text-goldlight text-lg w-20 shrink-0">10:30</span>
+            <p class="text-white/90">トレイルへ移動</p>
+          </div>
+        </li>
+        <li class="relative reveal">
+          <span class="trail-dot absolute -left-10 sm:-left-14 top-1.5 w-3.5 h-3.5 rounded-full bg-goldlight"></span>
+          <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
+            <span class="tabular font-display text-goldlight text-lg w-20 shrink-0">10:45</span>
+            <p class="text-white/90">熊野神社を参拝</p>
+          </div>
+        </li>
+        <li class="relative reveal">
+          <span class="trail-dot absolute -left-10 sm:-left-14 top-1.5 w-3.5 h-3.5 rounded-full bg-gold"></span>
+          <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
+            <span class="tabular font-display text-gold text-lg w-20 shrink-0">11:15</span>
+            <p class="text-white">湯坂路にて禅ウォーキング</p>
+          </div>
+        </li>
+        <li class="relative reveal">
+          <span class="trail-dot absolute -left-10 sm:-left-14 top-1.5 w-3.5 h-3.5 rounded-full bg-goldlight"></span>
+          <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
+            <span class="tabular font-display text-goldlight text-lg w-20 shrink-0">12:15</span>
+            <p class="text-white/90">禅ウォーキング終了</p>
+          </div>
+        </li>
+        <li class="relative reveal">
+          <span class="trail-dot absolute -left-10 sm:-left-14 top-1.5 w-3.5 h-3.5 rounded-full bg-goldlight"></span>
+          <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
+            <span class="tabular font-display text-goldlight text-lg w-20 shrink-0">12:30</span>
+            <p class="text-white/90">HAKONE CALLINGにてチェックアウト・シェアリング</p>
+          </div>
+        </li>
+        <li class="relative reveal">
+          <span class="trail-dot absolute -left-10 sm:-left-14 top-1.5 w-3.5 h-3.5 rounded-full bg-goldlight"></span>
+          <div class="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6">
+            <span class="tabular font-display text-goldlight text-lg w-20 shrink-0">12:45</span>
+            <p class="text-white/90">解散</p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== GUIDE ===================== -->
+<section id="guide" class="bg-paper">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
+    <p class="eyebrow uppercase mb-4 reveal">案内人</p>
+    <div class="grid md:grid-cols-[280px_1fr] gap-10 md:gap-16 items-start mt-6">
+      <div class="reveal flex md:block justify-center">
+        <div class="relative w-56 h-56 sm:w-64 sm:h-64 md:w-[280px] md:h-[280px] rounded-full overflow-hidden ring-4 ring-gold/70 ring-offset-4 ring-offset-paper">
+          <img src="images/guide.jpg"
+               alt="禅ウォーキングツアーのガイド、コウヘイのポートレート"
+               width="560" height="560" class="w-full h-full object-cover" />
+        </div>
+      </div>
+      <div class="reveal">
+        <h2 class="font-display text-2xl sm:text-3xl mb-6">コウヘイ — あなたのガイド</h2>
+        <div class="prose-copy space-y-4 text-ink/80 leading-8 text-[1.02rem]">
+          <p>はじめまして。箱根で禅ウォーキングツアーのガイドを務めるコウヘイです。</p>
+          <p>元エンジニアで、1児の父です。2026年、思いのままに独立し、ネイチャーガイドになりました。並行して、身体感覚と自律神経を整える施術にも長年携わってきました。</p>
+          <p>心と身体のつながりに関する経験を活かし、この特別な瞑想的な森の散歩を皆さんとご一緒できることを光栄に思います。一緒に心を静め、自分自身と向き合い、箱根の美しい森の奥で安らぎを見つけましょう。</p>
+          <p>今回は国内向けのモニターツアーとして実施します。皆さんの率直なご感想をいただけたら嬉しいです。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FAQ ===================== -->
+<section id="faq" class="bg-paper2">
+  <div class="max-w-3xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
+    <p class="eyebrow uppercase mb-4 reveal">よくある質問</p>
+    <h2 class="text-3xl sm:text-4xl mb-12 reveal">事前に知っておきたいこと</h2>
+
+    <div class="divide-y divide-ink/10 border-t border-b border-ink/10">
+
+      <div class="faq-item" data-open="false">
+        <button class="faq-trigger w-full flex items-center justify-between gap-4 text-left py-5" aria-expanded="false">
+          <span class="font-medium text-lg">一人でも参加できますか？</span>
+          <svg class="faq-icon shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v16M4 12h16"/></svg>
+        </button>
+        <div class="faq-panel"><div><p class="pb-5 text-ink/75 leading-relaxed">もちろんです！お一人での参加も大歓迎です。</p></div></div>
+      </div>
+
+      <div class="faq-item" data-open="false">
+        <button class="faq-trigger w-full flex items-center justify-between gap-4 text-left py-5" aria-expanded="false">
+          <span class="font-medium text-lg">ツアー中に荷物を預かってもらえますか？</span>
+          <svg class="faq-icon shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v16M4 12h16"/></svg>
+        </button>
+        <div class="faq-panel"><div><p class="pb-5 text-ink/75 leading-relaxed">はい、ツアー中は施錠可能なスタッフルームで安全にお預かりします。</p></div></div>
+      </div>
+
+      <div class="faq-item" data-open="false">
+        <button class="faq-trigger w-full flex items-center justify-between gap-4 text-left py-5" aria-expanded="false">
+          <span class="font-medium text-lg">体力に自信がありませんが参加できますか？</span>
+          <svg class="faq-icon shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v16M4 12h16"/></svg>
+        </button>
+        <div class="faq-panel"><div><p class="pb-5 text-ink/75 leading-relaxed">ご安心ください。山道を1時間ほど、ゆったりとした瞑想的なペースで歩きます。ほとんどの方が無理なく参加いただけます。</p></div></div>
+      </div>
+
+      <div class="faq-item" data-open="false">
+        <button class="faq-trigger w-full flex items-center justify-between gap-4 text-left py-5" aria-expanded="false">
+          <span class="font-medium text-lg">服装や持ち物の指定はありますか？</span>
+          <svg class="faq-icon shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v16M4 12h16"/></svg>
+        </button>
+        <div class="faq-panel"><div><p class="pb-5 text-ink/75 leading-relaxed">虫除けのため(特に夏場)、長袖・長ズボンを推奨します。履き慣れたスニーカーなど動きやすい靴であれば登山靴は不要です。お飲み物は各自ご持参ください。</p></div></div>
+      </div>
+
+      <div class="faq-item" data-open="false">
+        <button class="faq-trigger w-full flex items-center justify-between gap-4 text-left py-5" aria-expanded="false">
+          <span class="font-medium text-lg">雨天の場合はどうなりますか？</span>
+          <svg class="faq-icon shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v16M4 12h16"/></svg>
+        </button>
+        <div class="faq-panel"><div><p class="pb-5 text-ink/75 leading-relaxed">小雨程度であれば実施します。霧に包まれた森を歩くのもまた瞑想的で美しい体験です。ただし荒天により中止する場合は、前日19時までにご連絡します。その場合キャンセル料はかかりません。</p></div></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ACCESS ===================== -->
+<section id="access" class="bg-paper">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
+    <p class="eyebrow uppercase mb-4 reveal">アクセス</p>
+    <h2 class="text-3xl sm:text-4xl mb-10 reveal max-w-xl">集合場所について</h2>
+
+    <div class="grid md:grid-cols-[1.1fr_1fr] gap-8 items-stretch">
+      <div class="map-card reveal rounded-sm p-8 sm:p-10 flex flex-col justify-center min-h-[260px]">
+        <span class="eyebrow uppercase mb-3">集合場所</span>
+        <h3 class="font-display text-2xl mb-3">
+          <a href="https://share.google/LPky7bV25CGYQiagT" target="_blank" rel="noopener noreferrer" class="underline decoration-gold/50 hover:decoration-gold">HAKONE CALLING</a> — 玄関口
+        </h3>
+        <p class="text-ink/75 leading-relaxed">箱根湯本駅から徒歩3分。</p>
+        <div class="mt-6 flex items-center gap-3 text-forest">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-6.5-7-11a7 7 0 1 1 14 0c0 4.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+          <span class="text-sm font-medium">神奈川県 箱根湯本</span>
+        </div>
+      </div>
+      <div class="reveal border border-ink/10 rounded-sm overflow-hidden min-h-[260px] flex items-center justify-center bg-paper2">
+        <div class="text-center px-6">
+          <svg class="mx-auto mb-4 text-forest/70" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 20l-5.447-2.724A1 1 0 0 1 3 16.382V5.618a1 1 0 0 1 1.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0 0 21 18.382V7.618a1 1 0 0 0-.553-.894L15 4m0 13V4m0 0L9 7"/></svg>
+          <p class="text-ink/60 text-sm">箱根湯本駅周辺の地図</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== TOUR DETAILS / CTA ===================== -->
+<section id="book" class="bg-forestdeep text-paper">
+  <div class="max-w-4xl mx-auto px-5 sm:px-8 py-20 sm:py-28">
+    <div class="text-center mb-14 reveal">
+      <p class="eyebrow uppercase mb-4">ご予約</p>
+      <h2 class="text-3xl sm:text-4xl text-white">モニターツアーに申し込む</h2>
+    </div>
+
+    <div class="reveal bg-paper text-ink rounded-sm overflow-hidden">
+      <div class="p-7 sm:p-10 text-center border-b border-ink/10 bg-paper2">
+        <p class="text-sm uppercase tracking-widest text-ink/50 mb-2">モニターツアー特別価格</p>
+        <div class="flex items-end justify-center gap-3">
+          <span class="font-display text-4xl sm:text-5xl text-forest">¥1,000</span>
+          <span class="text-ink/45 line-through text-lg mb-1">¥12,500</span>
+        </div>
+        <p class="text-xs text-ink/45 mt-2">通常価格 ¥12,500 · お一人様</p>
+      </div>
+
+      <dl class="divide-y divide-ink/10 text-sm sm:text-base">
+        <div class="flex justify-between gap-4 px-7 sm:px-10 py-4">
+          <dt class="text-ink/55">含まれるもの</dt>
+          <dd class="text-right font-medium">ガイド料、保険、HAKONE CALLINGオリジナル絵馬</dd>
+        </div>
+        <div class="flex justify-between gap-4 px-7 sm:px-10 py-4">
+          <dt class="text-ink/55">定員</dt>
+          <dd class="text-right font-medium">1回あたり最大6名</dd>
+        </div>
+        <div class="flex justify-between gap-4 px-7 sm:px-10 py-4">
+          <dt class="text-ink/55">対象年齢</dt>
+          <dd class="text-right font-medium">10歳以上</dd>
+        </div>
+        <div class="flex justify-between gap-4 px-7 sm:px-10 py-4">
+          <dt class="text-ink/55">ガイド言語</dt>
+          <dd class="text-right font-medium">日本語</dd>
+        </div>
+        <div class="flex justify-between gap-4 px-7 sm:px-10 py-4">
+          <dt class="text-ink/55">集合</dt>
+          <dd class="text-right font-medium">10:10 · HAKONE CALLING 玄関口</dd>
+        </div>
+        <div class="flex justify-between gap-4 px-7 sm:px-10 py-4">
+          <dt class="text-ink/55">解散</dt>
+          <dd class="text-right font-medium">12:45 · 同会場</dd>
+        </div>
+      </dl>
+
+      <div class="p-7 sm:p-10 text-center">
+        <a href="https://forms.gle/VWQhawnMBft8cHyQ6" target="_blank" rel="noopener noreferrer" class="inline-block w-full sm:w-auto bg-gold hover:bg-goldlight text-forestdeep font-semibold text-lg px-10 py-4 rounded-sm transition-colors">
+          モニターツアーに申し込む
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="bg-forest text-paper/70">
+  <div class="max-w-6xl mx-auto px-5 sm:px-8 py-10 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm">
+    <p class="font-display text-paper">禅 Zen Walking Hakone</p>
+    <p>HAKONE CALLING · 神奈川県 箱根湯本</p>
+  </div>
+</footer>
+
+<script>
+  // Sticky nav background on scroll
+  const nav = document.getElementById('site-nav');
+  const onScroll = () => {
+    if (window.scrollY > 40) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Mobile menu toggle
+  const menuToggle = document.getElementById('menu-toggle');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const iconOpen = document.getElementById('menu-icon-open');
+  const iconClose = document.getElementById('menu-icon-close');
+  menuToggle.addEventListener('click', () => {
+    const isOpen = mobileMenu.classList.toggle('open');
+    menuToggle.setAttribute('aria-expanded', String(isOpen));
+    iconOpen.classList.toggle('hidden', isOpen);
+    iconClose.classList.toggle('hidden', !isOpen);
+  });
+  mobileMenu.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+      menuToggle.setAttribute('aria-expanded', 'false');
+      iconOpen.classList.remove('hidden');
+      iconClose.classList.add('hidden');
+    });
+  });
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const trigger = item.querySelector('.faq-trigger');
+    trigger.addEventListener('click', () => {
+      const isOpen = item.getAttribute('data-open') === 'true';
+      item.setAttribute('data-open', String(!isOpen));
+      trigger.setAttribute('aria-expanded', String(!isOpen));
+    });
+  });
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(el => io.observe(el));
+  } else {
+    revealEls.forEach(el => el.classList.add('is-visible'));
+  }
+</script>
+
+</body>
+</html>
