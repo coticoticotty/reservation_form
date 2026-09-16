@@ -479,6 +479,7 @@
   let filteredTours = [];
   let calendarViewDate = new Date();
   let selectedTourValue = null;
+  let isInLineFlag = false; // LINE経由で開いているか（リピーター価格の表示判定に使用）
 
   // --- 診断用デバッグ表示（URLに ?debug=1 を付けた時だけ画面下に状態を表示） ---
   const DEBUG = new URLSearchParams(location.search).has('debug');
@@ -515,6 +516,7 @@ window.onload = function() {
     liff.init({ liffId: "2010045353-fQ7AOUJA" }).then(() => {
       // LINEアプリ内から開かれているかどうかの判定を取得
       const isInLine = liff.isInClient();
+      isInLineFlag = isInLine;
       debugLog('liff.init 成功 / isInClient: ' + isInLine);
 
       // ツアー一覧の取得・描画関数を呼び出す（LINE内かどうかの判定を渡す）
@@ -648,6 +650,12 @@ window.onload = function() {
           cell.appendChild(dot);
         }
 
+        if (tour.color) {
+          cell.style.borderBottomStyle = 'solid';
+          cell.style.borderBottomWidth = '3px';
+          cell.style.borderBottomColor = tour.color;
+        }
+
         if (!tour.disabled) {
           if (tour.value === selectedTourValue) cell.classList.add('selected');
           cell.addEventListener('click', () => selectTourDate(tour.value));
@@ -690,7 +698,23 @@ window.onload = function() {
 
     const info = document.getElementById('selectedTourInfo');
     info.style.display = 'block';
-    info.textContent = '選択中： ' + tour.label;
+    info.innerHTML = '';
+    if (tour.color) {
+      const dot = document.createElement('span');
+      dot.style.display = 'inline-block';
+      dot.style.width = '8px';
+      dot.style.height = '8px';
+      dot.style.borderRadius = '50%';
+      dot.style.backgroundColor = tour.color;
+      dot.style.marginRight = '6px';
+      dot.style.verticalAlign = 'middle';
+      info.appendChild(dot);
+    }
+    const price = (isInLineFlag && tour.repeaterPrice) ? tour.repeaterPrice : tour.price;
+    const priceText = price ? `　${Number(price).toLocaleString()}円/人` : '';
+    const textSpan = document.createElement('span');
+    textSpan.textContent = '選択中： ' + tour.label + priceText;
+    info.appendChild(textSpan);
 
     updateParticipantCountOptions(tour);
     renderCalendar();
@@ -792,6 +816,7 @@ window.onload = function() {
       repPhone: this.repPhone.value.trim().replace(/[^0-9-]/g, ''),
       tourDate: this.tourDate.value,
       tourName: this.tourName.value,
+      tourId: this.tourId.value,
       transportMethod: getSelectedTransportMethod(),
       paymentMethod: this.paymentMethod.value,
       bookingTool: document.getElementById('bookingTool').value,
