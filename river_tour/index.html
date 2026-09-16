@@ -198,6 +198,15 @@
       background: #8f7fc7;
       border: 1px solid #fff;
     }
+    .cal-tour-dot {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      border: 1px solid #fff;
+    }
     .calendar-empty {
       text-align: center;
       font-size: 0.85em;
@@ -219,6 +228,28 @@
       border-radius: 50%;
       background: #8f7fc7;
       display: inline-block;
+    }
+    .calendar-tour-legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px 14px;
+      font-size: 0.72em;
+      color: #6b6b6b;
+      margin-top: 10px;
+    }
+    .calendar-tour-legend .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .calendar-tour-legend .legend-swatch {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+      border: 1px solid rgba(0,0,0,0.08);
     }
     .selected-tour-info {
       margin-top: 12px;
@@ -342,6 +373,7 @@
           </div>
           <div class="calendar-grid" id="calendarGrid"></div>
           <p class="calendar-empty" id="calendarEmpty" style="display:none;"></p>
+          <p class="calendar-tour-legend" id="calendarTourLegend" style="display:none;"></p>
           <p class="calendar-legend" id="calendarLegend" style="display:none;">
             <span class="legend-dot"></span> リピーター限定
           </p>
@@ -386,34 +418,36 @@
         <h3 style="color: #475569;">ツアーのご案内・お持ち物</h3>
         <div class="policy-section">
           <span class="policy-title">参加費</span><br>
-          12,500円/人
+          <span id="policyFee">12,500円/人</span>
         </div>
         <div class="policy-section">
           <span class="policy-title">集合・解散</span><br>
-          小田急線新松田駅南口 9時45分集合<br>
-          同駅 16時半解散<br>
-          お車で現地集合の場合、<a href="https://maps.app.goo.gl/ij9yMoC6jztvtihQ8" target="_blank" rel="noopener noreferrer">箒杉公園駐車場</a>に10時30分集合<br>
-          ツアーの進行状況・交通状況次第で30分ほど前後します。
-        </div>
-        <div class="policy-section">
-          <span class="policy-title">定員</span><br>
-          各回4名※高校生以上
+          <span id="policyMeeting">
+            小田急線新松田駅南口 9時45分集合<br>
+            同駅 16時半解散<br>
+            お車で現地集合の場合、<a href="https://maps.app.goo.gl/ij9yMoC6jztvtihQ8" target="_blank" rel="noopener noreferrer">箒杉公園駐車場</a>に10時30分集合<br>
+            ツアーの進行状況・交通状況次第で30分ほど前後します。
+          </span>
         </div>
         <div class="policy-section">
           <span class="policy-title">無料レンタル</span><br>
-          ・ウェットスーツ<br>
-          ・沢靴<br>
-          ・沢靴用靴下<br>
-          ・ヘルメット
+          <span id="policyFreeRentals">
+            ・ウェットスーツ<br>
+            ・沢靴<br>
+            ・沢靴用靴下<br>
+            ・ヘルメット
+          </span>
         </div>
         <div class="policy-section">
           <span class="policy-title">持ち物</span><br>
-          ・水着（濡れてもよい服）<br>
-          ・サンダル<br>
-          ・飲み物（1人1L程度）<br>
-          ・お昼ご飯<br>
-          ・着替え＆タオル<br>
-          ・(希望者のみ)スイムゴーグル
+          <span id="policyBelongings">
+            ・水着（濡れてもよい服）<br>
+            ・サンダル<br>
+            ・飲み物（1人1L程度）<br>
+            ・お昼ご飯<br>
+            ・着替え＆タオル<br>
+            ・(希望者のみ)スイムゴーグル
+          </span>
         </div>
         <div class="policy-section">
           <span class="policy-title">保険について</span><br>
@@ -486,6 +520,7 @@
   let filteredTours = [];
   let calendarViewDate = new Date();
   let selectedTourValue = null;
+  let isInLineFlag = false; // LINE経由で開いているか（リピーター価格の表示判定に使用）
 
 window.onload = function() {
     // 移動手段のデフォルトを明示的に「新松田駅集合」にする
@@ -505,6 +540,7 @@ window.onload = function() {
     liff.init({ liffId: "2010102166-omqmt59M" }).then(() => {
       // LINEアプリ内から開かれているかどうかの判定を取得
       const isInLine = liff.isInClient();
+      isInLineFlag = isInLine;
 
       // ツアー一覧の取得・描画関数を呼び出す（LINE内かどうかの判定を渡す）
       loadTours(isInLine);
@@ -557,6 +593,9 @@ window.onload = function() {
         // 満席の日程が一定数以上ある場合のみキャンセル待ち案内を表示
         const soldOutCount = filteredTours.filter(t => t.disabled).length;
         document.getElementById('waitlistNote').style.display = soldOutCount >= WAITLIST_THRESHOLD ? 'block' : 'none';
+
+        // 初期表示は代表として一番早いツアーの内容を「ツアーのご案内・お持ち物」に反映
+        if (filteredTours.length > 0) updateTourInfoBox(filteredTours[0]);
 
         renderCalendar();
       })
@@ -631,6 +670,13 @@ window.onload = function() {
           cell.appendChild(dot);
         }
 
+        if (tour.color) {
+          const colorDot = document.createElement('span');
+          colorDot.className = 'cal-tour-dot';
+          colorDot.style.backgroundColor = tour.color;
+          cell.appendChild(colorDot);
+        }
+
         if (!tour.disabled) {
           if (tour.value === selectedTourValue) cell.classList.add('selected');
           cell.addEventListener('click', () => selectTourDate(tour.value));
@@ -654,6 +700,34 @@ window.onload = function() {
 
     const legend = document.getElementById('calendarLegend');
     legend.style.display = monthTours.some(t => t.isLineOnly) ? 'flex' : 'none';
+
+    const tourLegend = document.getElementById('calendarTourLegend');
+    const seen = new Set();
+    const uniqueTours = [];
+    monthTours.forEach(t => {
+      if (t.color && !seen.has(t.tourName)) {
+        seen.add(t.tourName);
+        uniqueTours.push(t);
+      }
+    });
+    if (uniqueTours.length > 0) {
+      tourLegend.innerHTML = '';
+      uniqueTours.forEach(t => {
+        const item = document.createElement('span');
+        item.className = 'legend-item';
+        const swatch = document.createElement('span');
+        swatch.className = 'legend-swatch';
+        swatch.style.backgroundColor = t.color;
+        item.appendChild(swatch);
+        const label = document.createElement('span');
+        label.textContent = t.tourName;
+        item.appendChild(label);
+        tourLegend.appendChild(item);
+      });
+      tourLegend.style.display = 'flex';
+    } else {
+      tourLegend.style.display = 'none';
+    }
   }
 
   function changeMonth(delta) {
@@ -673,10 +747,68 @@ window.onload = function() {
 
     const info = document.getElementById('selectedTourInfo');
     info.style.display = 'block';
-    info.textContent = '選択中： ' + tour.label;
+    info.innerHTML = '';
+    if (tour.color) {
+      const dot = document.createElement('span');
+      dot.style.display = 'inline-block';
+      dot.style.width = '8px';
+      dot.style.height = '8px';
+      dot.style.borderRadius = '50%';
+      dot.style.backgroundColor = tour.color;
+      dot.style.marginRight = '6px';
+      dot.style.verticalAlign = 'middle';
+      info.appendChild(dot);
+    }
+    const price = (isInLineFlag && tour.repeaterPrice) ? tour.repeaterPrice : tour.price;
+    const priceText = price ? `　${Number(price).toLocaleString()}円/人` : '';
+    const textSpan = document.createElement('span');
+    textSpan.textContent = '選択中： ' + tour.label + priceText;
+    info.appendChild(textSpan);
 
     updateParticipantCountOptions(tour);
+    updateTourInfoBox(tour);
     renderCalendar();
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  }
+
+  function linesToHtml(text) {
+    return String(text).split(/\r\n|\r|\n/).map(escapeHtml).join('<br>');
+  }
+
+  // ツアーのご案内・お持ち物ボックスを、選択中（または代表）のツアー内容に合わせて更新する
+  function updateTourInfoBox(tour) {
+    if (!tour) return;
+
+    const price = (isInLineFlag && tour.repeaterPrice) ? tour.repeaterPrice : tour.price;
+    const feeEl = document.getElementById('policyFee');
+    if (feeEl && price) feeEl.textContent = Number(price).toLocaleString() + '円/人';
+
+    const meetingEl = document.getElementById('policyMeeting');
+    if (meetingEl && (tour.location || tour.time || tour.onsiteLocation)) {
+      let html = escapeHtml(tour.location || '') + ' ' + escapeHtml(tour.time || '') + '集合<br>';
+      html += '同駅 16時半解散<br>';
+      if (tour.onsiteLocation) {
+        const locText = tour.mapLink
+          ? `<a href="${escapeHtml(tour.mapLink)}" target="_blank" rel="noopener noreferrer">${escapeHtml(tour.onsiteLocation)}</a>`
+          : escapeHtml(tour.onsiteLocation);
+        html += 'お車で現地集合の場合、' + locText + 'に' + escapeHtml(tour.onsiteTime || '') + '集合<br>';
+      }
+      html += 'ツアーの進行状況・交通状況次第で30分ほど前後します。';
+      meetingEl.innerHTML = html;
+    }
+
+    const belongingsEl = document.getElementById('policyBelongings');
+    if (belongingsEl && tour.belongings) {
+      belongingsEl.innerHTML = linesToHtml(tour.belongings);
+    }
+
+    const freeRentalsEl = document.getElementById('policyFreeRentals');
+    if (freeRentalsEl && tour.freeRentals) {
+      freeRentalsEl.innerHTML = linesToHtml(tour.freeRentals);
+    }
   }
 
   function getSelectedTransportMethod() {
@@ -775,6 +907,7 @@ window.onload = function() {
       repPhone: this.repPhone.value.trim().replace(/[^0-9-]/g, ''),
       tourDate: this.tourDate.value,
       tourName: this.tourName.value,
+      tourId: this.tourId.value,
       transportMethod: getSelectedTransportMethod(),
       paymentMethod: this.paymentMethod.value,
       bookingTool: document.getElementById('bookingTool').value,
