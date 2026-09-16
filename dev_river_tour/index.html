@@ -418,14 +418,16 @@
         <h3 style="color: #475569;">ツアーのご案内・お持ち物</h3>
         <div class="policy-section">
           <span class="policy-title">参加費</span><br>
-          12,500円/人
+          <span id="policyFee">12,500円/人</span>
         </div>
         <div class="policy-section">
           <span class="policy-title">集合・解散</span><br>
-          小田急線新松田駅南口 10時集合<br>
-          同駅 16時半解散<br>
-          お車で現地集合の場合、<a href="https://maps.app.goo.gl/ij9yMoC6jztvtihQ8" target="_blank" rel="noopener noreferrer">箒杉公園駐車場</a>に10時45分集合<br>
-          ツアーの進行状況・交通状況次第で30分ほど前後します。
+          <span id="policyMeeting">
+            小田急線新松田駅南口 10時集合<br>
+            同駅 16時半解散<br>
+            お車で現地集合の場合、<a href="https://maps.app.goo.gl/ij9yMoC6jztvtihQ8" target="_blank" rel="noopener noreferrer">箒杉公園駐車場</a>に10時45分集合<br>
+            ツアーの進行状況・交通状況次第で30分ほど前後します。
+          </span>
         </div>
         <div class="policy-section">
           <span class="policy-title">定員</span><br>
@@ -440,12 +442,14 @@
         </div>
         <div class="policy-section">
           <span class="policy-title">持ち物</span><br>
-          ・水着（濡れてもよい服）<br>
-          ・サンダル<br>
-          ・飲み物<br>
-          ・お昼ご飯<br>
-          ・着替え＆タオル<br>
-          ・(希望者のみ)スイムゴーグル
+          <span id="policyBelongings">
+            ・水着（濡れてもよい服）<br>
+            ・サンダル<br>
+            ・飲み物<br>
+            ・お昼ご飯<br>
+            ・着替え＆タオル<br>
+            ・(希望者のみ)スイムゴーグル
+          </span>
         </div>
         <div class="policy-section">
           <span class="policy-title">保険について</span><br>
@@ -608,6 +612,9 @@ window.onload = function() {
         // 満席の日程が一定数以上ある場合のみキャンセル待ち案内を表示
         const soldOutCount = filteredTours.filter(t => t.disabled).length;
         document.getElementById('waitlistNote').style.display = soldOutCount >= WAITLIST_THRESHOLD ? 'block' : 'none';
+
+        // 初期表示は代表として一番早いツアーの内容を「ツアーのご案内・お持ち物」に反映
+        if (filteredTours.length > 0) updateTourInfoBox(filteredTours[0]);
 
         renderCalendar();
       })
@@ -778,7 +785,44 @@ window.onload = function() {
     info.appendChild(textSpan);
 
     updateParticipantCountOptions(tour);
+    updateTourInfoBox(tour);
     renderCalendar();
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  }
+
+  function linesToHtml(text) {
+    return String(text).split(/\r\n|\r|\n/).map(escapeHtml).join('<br>');
+  }
+
+  // ツアーのご案内・お持ち物ボックスを、選択中（または代表）のツアー内容に合わせて更新する
+  function updateTourInfoBox(tour) {
+    if (!tour) return;
+
+    const price = (isInLineFlag && tour.repeaterPrice) ? tour.repeaterPrice : tour.price;
+    const feeEl = document.getElementById('policyFee');
+    if (feeEl && price) feeEl.textContent = Number(price).toLocaleString() + '円/人';
+
+    const meetingEl = document.getElementById('policyMeeting');
+    if (meetingEl && (tour.location || tour.time || tour.onsiteLocation)) {
+      let html = escapeHtml(tour.location || '') + ' ' + escapeHtml(tour.time || '') + '集合<br>';
+      html += '同駅 16時半解散<br>';
+      if (tour.onsiteLocation) {
+        const locText = tour.mapLink
+          ? `<a href="${escapeHtml(tour.mapLink)}" target="_blank" rel="noopener noreferrer">${escapeHtml(tour.onsiteLocation)}</a>`
+          : escapeHtml(tour.onsiteLocation);
+        html += 'お車で現地集合の場合、' + locText + 'に' + escapeHtml(tour.onsiteTime || '') + '集合<br>';
+      }
+      html += 'ツアーの進行状況・交通状況次第で30分ほど前後します。';
+      meetingEl.innerHTML = html;
+    }
+
+    const belongingsEl = document.getElementById('policyBelongings');
+    if (belongingsEl && tour.belongings) {
+      belongingsEl.innerHTML = linesToHtml(tour.belongings);
+    }
   }
 
   function getSelectedTransportMethod() {
