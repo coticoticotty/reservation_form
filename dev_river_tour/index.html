@@ -430,15 +430,13 @@
           </span>
         </div>
         <div class="policy-section">
-          <span class="policy-title">定員</span><br>
-          各回4名※高校生以上
-        </div>
-        <div class="policy-section">
           <span class="policy-title">無料レンタル</span><br>
-          ・ウェットスーツ<br>
-          ・沢靴<br>
-          ・沢靴用靴下<br>
-          ・ヘルメット
+          <span id="policyFreeRentals">
+            ・ウェットスーツ<br>
+            ・沢靴<br>
+            ・沢靴用靴下<br>
+            ・ヘルメット
+          </span>
         </div>
         <div class="policy-section">
           <span class="policy-title">持ち物</span><br>
@@ -822,6 +820,11 @@ window.onload = function() {
     const belongingsEl = document.getElementById('policyBelongings');
     if (belongingsEl && tour.belongings) {
       belongingsEl.innerHTML = linesToHtml(tour.belongings);
+    }
+
+    const freeRentalsEl = document.getElementById('policyFreeRentals');
+    if (freeRentalsEl && tour.freeRentals) {
+      freeRentalsEl.innerHTML = linesToHtml(tour.freeRentals);
     }
   }
 
