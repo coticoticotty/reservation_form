@@ -198,6 +198,15 @@
       background: #8f7fc7;
       border: 1px solid #fff;
     }
+    .cal-tour-dot {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      border: 1px solid #fff;
+    }
     .calendar-empty {
       text-align: center;
       font-size: 0.85em;
@@ -219,6 +228,28 @@
       border-radius: 50%;
       background: #8f7fc7;
       display: inline-block;
+    }
+    .calendar-tour-legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px 14px;
+      font-size: 0.72em;
+      color: #6b6b6b;
+      margin-top: 10px;
+    }
+    .calendar-tour-legend .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .calendar-tour-legend .legend-swatch {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+      border: 1px solid rgba(0,0,0,0.08);
     }
     .selected-tour-info {
       margin-top: 12px;
@@ -342,6 +373,7 @@
           </div>
           <div class="calendar-grid" id="calendarGrid"></div>
           <p class="calendar-empty" id="calendarEmpty" style="display:none;"></p>
+          <p class="calendar-tour-legend" id="calendarTourLegend" style="display:none;"></p>
           <p class="calendar-legend" id="calendarLegend" style="display:none;">
             <span class="legend-dot"></span> リピーター限定
           </p>
@@ -651,9 +683,10 @@ window.onload = function() {
         }
 
         if (tour.color) {
-          cell.style.borderBottomStyle = 'solid';
-          cell.style.borderBottomWidth = '3px';
-          cell.style.borderBottomColor = tour.color;
+          const colorDot = document.createElement('span');
+          colorDot.className = 'cal-tour-dot';
+          colorDot.style.backgroundColor = tour.color;
+          cell.appendChild(colorDot);
         }
 
         if (!tour.disabled) {
@@ -679,6 +712,34 @@ window.onload = function() {
 
     const legend = document.getElementById('calendarLegend');
     legend.style.display = monthTours.some(t => t.isLineOnly) ? 'flex' : 'none';
+
+    const tourLegend = document.getElementById('calendarTourLegend');
+    const seen = new Set();
+    const uniqueTours = [];
+    monthTours.forEach(t => {
+      if (t.color && !seen.has(t.tourName)) {
+        seen.add(t.tourName);
+        uniqueTours.push(t);
+      }
+    });
+    if (uniqueTours.length > 0) {
+      tourLegend.innerHTML = '';
+      uniqueTours.forEach(t => {
+        const item = document.createElement('span');
+        item.className = 'legend-item';
+        const swatch = document.createElement('span');
+        swatch.className = 'legend-swatch';
+        swatch.style.backgroundColor = t.color;
+        item.appendChild(swatch);
+        const label = document.createElement('span');
+        label.textContent = t.tourName;
+        item.appendChild(label);
+        tourLegend.appendChild(item);
+      });
+      tourLegend.style.display = 'flex';
+    } else {
+      tourLegend.style.display = 'none';
+    }
   }
 
   function changeMonth(delta) {
