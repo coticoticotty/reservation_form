@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <base target="_top">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap">
+  <style>
+    :root {
+      --cream: #fcfbf9;
+      --charcoal: #2c2c2c;
+      --turquoise: #20b2aa;
+      --turquoise-light: #3fc7bf;
+      --turquoise-soft: #e6f5f3;
+      --mist: #e8f4f8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: var(--cream);
+      color: var(--charcoal);
+    }
+    .container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      background: var(--cream);
+      padding: 24px 20px 40px;
+      border-radius: 0;
+      box-shadow: none;
+    }
+    h2 {
+      font-family: 'Noto Serif JP', serif;
+      font-weight: 500;
+      font-size: 1.3em;
+      color: var(--charcoal);
+      letter-spacing: 0.04em;
+      margin: 8px 0 28px;
+      text-align: center;
+    }
+    h3 {
+      font-family: 'Noto Serif JP', serif;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+    }
+    .input-group { margin-bottom: 20px; }
+    label { font-weight: 500; display: block; margin-bottom: 6px; color: #4a4a4a; font-size: 0.92em; }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #dbe2df;
+      border-radius: 8px;
+      box-sizing: border-box;
+      background: #fff;
+      color: var(--charcoal);
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--turquoise);
+      box-shadow: 0 0 0 3px rgba(32,178,170,0.15);
+    }
+    input,
+    select,
+    button {
+      font-size: 16px;
+      font-family: 'Noto Sans JP', sans-serif;
+    }
+    .participant-card { border: 1px solid #e7ede9; border-radius: 8px; padding: 14px; margin-bottom: 12px; background: #fff; }
+    .submit-btn {
+      background: var(--turquoise);
+      color: white;
+      padding: 16px;
+      border: none;
+      width: 100%;
+      font-size: 18px;
+      font-family: 'Noto Serif JP', serif;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      border-radius: 999px;
+      transition: background-color 0.3s ease;
+    }
+    .submit-btn:hover:not(:disabled) { background: var(--turquoise-light); }
+    .submit-btn:disabled { background: #ccc; }
+
+    /* 支払い方法（ラジオボタン）のスタイル調整 */
+    .payment-group { margin-bottom: 22px; padding: 14px; border: 1px solid #e7ede9; border-radius: 8px; background: #fff; }
+    .payment-group > label { margin-bottom: 10px; }
+    .form-check { display: flex; align-items: center; margin-bottom: 8px; cursor: pointer; }
+    .form-check input { width: auto; margin-right: 10px; cursor: pointer; accent-color: var(--turquoise); }
+    .form-check label { margin-bottom: 0; cursor: pointer; font-weight: normal; }
+
+    .hp-field { display: none !important; visibility: hidden !important; }
+
+    /* --- カレンダー --- */
+    .calendar-wrap {
+      border: 1px solid #dbe2df;
+      border-radius: 10px;
+      padding: 14px 14px 18px;
+      background: #fff;
+    }
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .cal-month {
+      font-family: 'Noto Serif JP', serif;
+      font-size: 1.05em;
+      color: var(--turquoise);
+      letter-spacing: 0.05em;
+    }
+    .cal-nav {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      line-height: 1;
+      color: var(--turquoise);
+      cursor: pointer;
+      padding: 4px 12px;
+      border-radius: 6px;
+    }
+    .cal-nav:hover { background: var(--turquoise-soft); }
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-size: 0.72em;
+      color: #9aa5a1;
+      margin-bottom: 6px;
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+    }
+    .cal-cell {
+      position: relative;
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
+      font-size: 0.85em;
+      border-radius: 8px;
+      color: #d3d8d5;
+    }
+    .cal-cell.empty { visibility: hidden; }
+    .cal-day { line-height: 1; }
+    .cal-badge {
+      font-size: 0.6em;
+      line-height: 1;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+    .cal-cell.has-tour {
+      background: var(--turquoise-soft);
+      color: #0f6d68;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid #bfe6e1;
+    }
+    .cal-cell.has-tour:hover { background: #c9ece6; }
+    .cal-cell.has-tour.low-stock {
+      background: #fdf0e2;
+      border-color: #f0d3ab;
+      color: #a3631a;
+    }
+    .cal-cell.has-tour.low-stock:hover { background: #fbe6cd; }
+    .cal-cell.has-tour.low-stock .cal-badge { color: #b3541e; }
+    .cal-cell.has-tour .cal-badge { color: #4a9d97; }
+    .cal-cell.selected {
+      background: var(--turquoise) !important;
+      color: #fff !important;
+      border-color: var(--turquoise) !important;
+    }
+    .cal-cell.selected .cal-badge { color: #fff !important; opacity: 0.85; }
+    .cal-cell.sold-out {
+      background: #f2f2ef;
+      color: #c3c7c3;
+      cursor: not-allowed;
+      border: 1px solid #ececec;
+    }
+    .cal-cell.sold-out .cal-day { text-decoration: line-through; }
+    .cal-cell.sold-out .cal-badge { color: #c3c7c3; }
+    .cal-line-dot {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #8f7fc7;
+      border: 1px solid #fff;
+    }
+    .cal-tour-dot {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      border: 1px solid #fff;
+    }
+    .calendar-empty {
+      text-align: center;
+      font-size: 0.85em;
+      color: #9aa5a1;
+      margin: 14px 0 2px;
+    }
+    .calendar-legend {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 0.75em;
+      color: #8a8a8a;
+      margin-top: 12px;
+    }
+    .calendar-legend .legend-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #8f7fc7;
+      display: inline-block;
+    }
+    .calendar-tour-legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px 14px;
+      font-size: 0.72em;
+      color: #6b6b6b;
+      margin-top: 10px;
+    }
+    .calendar-tour-legend .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .calendar-tour-legend .legend-swatch {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+      border: 1px solid rgba(0,0,0,0.08);
+    }
+    .selected-tour-info {
+      margin-top: 12px;
+      padding: 10px 12px;
+      background: var(--turquoise-soft);
+      border-radius: 8px;
+      font-size: 0.88em;
+      color: #0f6d68;
+      font-weight: 500;
+    }
+    .waitlist-note {
+      margin-top: 12px;
+      padding: 12px 14px;
+      background: var(--mist);
+      border-radius: 8px;
+      font-size: 0.85em;
+      color: var(--charcoal);
+      text-align: center;
+      line-height: 1.6;
+    }
+    .waitlist-note a {
+      color: var(--turquoise);
+      font-weight: 600;
+      text-decoration: underline;
+    }
+    .field-error {
+      color: #c0392b;
+      font-size: 0.85em;
+      margin-top: 8px;
+    }
+    .field-hint {
+      color: #0f6d68;
+      font-size: 0.85em;
+      margin-top: 6px;
+    }
+
+    .policy-box {
+      background: #f8fafc;
+      border: 1px solid #dbe2df;
+      padding: 16px;
+      border-radius: 8px;
+      font-size: 0.9em;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    .policy-box h3 { margin-top: 0; color: var(--turquoise); font-size: 1.1em; }
+    .policy-section { margin-bottom: 12px; }
+    .policy-title { font-weight: bold; color: #333; }
+    .policy-box a { color: var(--turquoise); font-weight: 600; text-decoration: underline; }
+    .ack-group { text-align: center; background: var(--mist); padding: 12px; border-radius: 8px; }
+    .ack-group label { display: inline-block; cursor: pointer; }
+    .ack-group input { width: auto; margin-right: 8px; accent-color: var(--turquoise); }
+
+    #success-message { display: none; text-align: center; padding: 40px 10px; }
+    #success-message h2 { color: var(--turquoise); }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px 16px 32px;
+      }
+      .participant-card {
+        padding: 12px;
+      }
+      .submit-btn {
+        font-size: 18px;
+        padding: 16px;
+      }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  
+  <div id="form-wrapper">
+    <h2>【テスト】予約フォーム</h2>
+    <form id="resForm">
+      
+      <div class="hp-field">
+        <label>ご職業（入力しないでください）</label>
+        <input type="text" name="hp_job_field" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="input-group">
+        <label>代表者氏名</label>
+        <input type="text" name="repName" maxlength="50" required>
+      </div>
+      <div class="input-group" id="email-section">
+        <label>メールアドレス</label>
+        <input type="email" name="repEmail" id="repEmailField" required>
+      </div>
+
+      <input type="hidden" name="lineUserId" id="lineUserId">
+      <input type="hidden" name="bookingTool" id="bookingTool" value="Webフォーム">
+      <div class="input-group">
+        <label>電話番号</label>
+        <input type="tel" name="repPhone" pattern="^[0-9\-]+$" title="数字とハイフンのみ入力可能です" required>
+      </div>
+
+      <div class="payment-group">
+        <label>移動手段</label>
+        <div class="form-check">
+          <input type="radio" name="transportMethod" id="transportStation" value="新松田駅集合" checked>
+          <label for="transportStation">新松田駅集合（ガイドの車で移動）</label>
+        </div>
+        <div class="form-check">
+          <input type="radio" name="transportMethod" id="transportOnsite" value="車で現地集合">
+          <label for="transportOnsite">車で現地集合</label>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label>参加希望日</label>
+        <div class="calendar-wrap">
+          <div class="calendar-header">
+            <button type="button" class="cal-nav" id="calPrev" aria-label="前の月">‹</button>
+            <span id="calMonthLabel" class="cal-month">読み込み中...</span>
+            <button type="button" class="cal-nav" id="calNext" aria-label="次の月">›</button>
+          </div>
+          <div class="calendar-weekdays">
+            <span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span>
+          </div>
+          <div class="calendar-grid" id="calendarGrid"></div>
+          <p class="calendar-empty" id="calendarEmpty" style="display:none;"></p>
+          <p class="calendar-tour-legend" id="calendarTourLegend" style="display:none;"></p>
+          <p class="calendar-legend" id="calendarLegend" style="display:none;">
+            <span class="legend-dot"></span> リピーター限定
+          </p>
+        </div>
+        <p class="waitlist-note" id="waitlistNote" style="display:none;">
+          満席の日程が多く恐れ入ります。<br>
+          <a href="https://forms.gle/PbtqpU3UjDDqpyxc8" target="_blank" rel="noopener noreferrer">キャンセル待ちフォーム</a>もぜひご利用ください。
+        </p>
+        <div class="selected-tour-info" id="selectedTourInfo" style="display:none;"></div>
+        <p class="field-error" id="tourError" style="display:none;">参加希望日を選択してください</p>
+        <input type="hidden" id="tourName" name="tourName">
+        <input type="hidden" id="tourDate" name="tourDate">
+        <input type="hidden" id="tourValue" name="tourId">
+      </div>
+
+      <div class="payment-group">
+        <label>お支払い方法</label>
+        <div class="form-check">
+          <input type="radio" name="paymentMethod" id="credit" value="クレジットカード" checked>
+          <label for="credit">クレジットカード決済</label>
+        </div>
+        <div class="form-check">
+          <input type="radio" name="paymentMethod" id="bank" value="銀行振込">
+          <label for="bank">銀行振込</label>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label id="countLabel">参加人数 (1〜4名)</label>
+        <select id="countSelect" name="count" onchange="generateParticipantFields(this.value)">
+          <option value="1">1名</option>
+          <option value="2">2名</option>
+          <option value="3">3名</option>
+          <option value="4">4名</option>
+        </select>
+        <p class="field-hint" id="countHint" style="display:none;"></p>
+      </div>
+
+      <div id="participantContainer"></div>
+
+      <div class="policy-box" style="background: #f8fafc; border-color: #cbd5e1;">
+        <h3 style="color: #475569;">ツアーのご案内・お持ち物</h3>
+        <div class="policy-section">
+          <span class="policy-title">参加費</span><br>
+          <span id="policyFee">12,500円/人</span>
+        </div>
+        <div class="policy-section">
+          <span class="policy-title">集合・解散</span><br>
+          <span id="policyMeeting">
+            小田急線新松田駅南口 10時集合<br>
+            同駅 16時半解散<br>
+            お車で現地集合の場合、<a href="https://maps.app.goo.gl/ij9yMoC6jztvtihQ8" target="_blank" rel="noopener noreferrer">箒杉公園駐車場</a>に10時45分集合<br>
+            ツアーの進行状況・交通状況次第で30分ほど前後します。
+          </span>
+        </div>
+        <div class="policy-section">
+          <span class="policy-title">無料レンタル</span><br>
+          <span id="policyFreeRentals">
+            ・ウェットスーツ<br>
+            ・沢靴<br>
+            ・沢靴用靴下<br>
+            ・ヘルメット
+          </span>
+        </div>
+        <div class="policy-section">
+          <span class="policy-title">持ち物</span><br>
+          <span id="policyBelongings">
+            ・水着（濡れてもよい服）<br>
+            ・サンダル<br>
+            ・飲み物<br>
+            ・お昼ご飯<br>
+            ・着替え＆タオル<br>
+            ・(希望者のみ)スイムゴーグル
+          </span>
+        </div>
+        <div class="policy-section">
+          <span class="policy-title">保険について</span><br>
+          ツアー料金には以下の保険料が含まれています。<br>
+          <div style="margin-top: 5px; padding-left: 8px; border-left: 3px solid #cbd5e1; color: #475569;">
+            <strong>【国内傷害保険（東京海上日動）】</strong><br>
+            ・死亡・後遺障害保険金額 1000万円<br>
+            ・入院保険金日額 10,000円<br>
+            ・通院保険金日額 5,000円<br>
+            <strong style="display: inline-block; margin-top: 5px;">【賠償責任保険（東京海上日動）】</strong><br>
+            ・1事故につき 3億円
+          </div>
+        </div>
+      </div>
+      <div class="policy-box">
+        <h3>確認事項</h3>
+        <div class="policy-section">
+          <span class="policy-title">ツアーの中止について</span><br>
+          天候や川のコンディションにより、ツアーを中止する場合があります。主催者判断による中止の場合は、参加費を全額返金いたします。
+        </div>
+        <div class="policy-section">
+          <span class="policy-title">川遊びのリスクについて</span><br>
+          川遊びは自然を相手にするアクティビティであり、予測困難なリスク（怪我や事故など）が常に伴います。<br>
+          これらの自然のリスクをご理解・ご承諾の上、ご参加いただけますようお願い申し上げます。
+        </div>
+        <div class="policy-section">
+          <span class="policy-title">キャンセル料について</span><br>
+          3日前～前日：50％<br>
+          当日・無連絡：100％<br>
+          それ以前：無料<br>
+          ※主催者判断の中止は全額返金いたします。
+        </div>
+        <div class="policy-section">
+          <span class="policy-title">ツアー中の写真や動画の利用について</span><br>
+          ツアー中に撮影した写真や動画は、SNSやチラシ等、販促のために公開利用をいたします。ご利用が不可の場合には、ツアー開始前にお申し出ください。
+        </div>
+
+        <div class="ack-group">
+          <label>
+            <input type="radio" name="ack" value="はい" required> 
+            内容を確認し、全てに同意します「はい」
+          </label>
+        </div>
+      </div>
+      <button type="submit" class="submit-btn" id="submitBtn">予約する</button>
+    </form>
+  </div>
+
+  <div id="success-message">
+    <h2>お申し込みありがとうございます。</h2>
+    <p>予約確認メールをお送りしました。</p>
+    <p>メールが届いていない場合は迷惑メールフォルダを確認した後、お手数ですが以下のアドレスまでご連絡ください。</p>    
+    <p>kohei.okamoto@hitotowa.info</p>
+  </div>
+
+</div>
+
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<script>
+  const GAS_API_URL = "https://script.google.com/macros/s/AKfycbybpSwSnx1e2sy89IQpjwV2Ye99cXXSqg6kGMAZ21joBcpj7FC2Ujif5QhbDXVeewsB/exec";
+  const WAITLIST_THRESHOLD = 10; // 満席の日程がこの件数以上になったらキャンセル待ち案内を表示
+  let tourData = [];
+  let filteredTours = [];
+  let calendarViewDate = new Date();
+  let selectedTourValue = null;
+  let isInLineFlag = false; // LINE経由で開いているか（リピーター価格の表示判定に使用）
+
+  // --- 診断用デバッグ表示（URLに ?debug=1 を付けた時だけ画面下に状態を表示） ---
+  const DEBUG = new URLSearchParams(location.search).has('debug');
+  function debugLog(msg) {
+    if (!DEBUG) return;
+    console.log('[LIFF debug]', msg);
+    let box = document.getElementById('debugBox');
+    if (!box) {
+      box = document.createElement('div');
+      box.id = 'debugBox';
+      box.style.cssText = 'position:fixed;bottom:0;left:0;right:0;background:#000;color:#0f0;font-size:11px;padding:8px;z-index:9999;white-space:pre-wrap;max-height:40vh;overflow:auto;font-family:monospace;';
+      document.body.appendChild(box);
+    }
+    box.textContent += msg + '\n';
+  }
+
+window.onload = function() {
+    // 移動手段のデフォルトを明示的に「新松田駅集合」にする
+    // （ブラウザのフォーム状態復元でchecked属性が無視されるケースへの対策）
+    if (!document.querySelector('input[name="transportMethod"]:checked')) {
+      document.getElementById('transportStation').checked = true;
+    }
+
+    // 参加者フィールドの初期生成
+    generateParticipantFields(1);
+
+    // カレンダーの月送りボタン
+    document.getElementById('calPrev').addEventListener('click', () => changeMonth(-1));
+    document.getElementById('calNext').addEventListener('click', () => changeMonth(1));
+
+    debugLog('liff.init 開始');
+
+    // LIFFの初期化
+    liff.init({ liffId: "2010045353-fQ7AOUJA" }).then(() => {
+      // LINEアプリ内から開かれているかどうかの判定を取得
+      const isInLine = liff.isInClient();
+      isInLineFlag = isInLine;
+      debugLog('liff.init 成功 / isInClient: ' + isInLine);
+
+      // ツアー一覧の取得・描画関数を呼び出す（LINE内かどうかの判定を渡す）
+      loadTours(isInLine);
+
+      if (isInLine) {
+        const loggedIn = liff.isLoggedIn();
+        debugLog('isLoggedIn: ' + loggedIn);
+        if (!loggedIn) {
+          debugLog('未ログインのため liff.login() を実行します');
+          liff.login();
+          return;
+        }
+
+        // LINEアプリ内から開かれた場合の処理
+        liff.getProfile().then(profile => {
+          debugLog('getProfile 成功: ' + profile.userId);
+          document.getElementById('lineUserId').value = profile.userId;
+          document.getElementById('bookingTool').value = "LINE";
+
+          // メール入力欄を隠し、必須を解除
+          document.getElementById('email-section').style.display = 'none';
+          document.getElementById('repEmailField').required = false;
+        }).catch(err => {
+          debugLog('getProfile 失敗: ' + err.message);
+          console.error("liff.getProfile failed", err);
+        });
+      } else {
+        debugLog('LINEクライアント外と判定 → Webフォーム表示のまま');
+        // 通常のブラウザ（Webフォーム）の場合
+        document.getElementById('bookingTool').value = "Webフォーム";
+      }
+    }).catch((err) => {
+      debugLog('liff.init 失敗: ' + err.message);
+      console.error("LIFF Initialization failed", err);
+      // LIFFの初期化に失敗した場合は、通常のWebフォーム（LINE外）としてツアーを取得
+      loadTours(false);
+    });
+  };
+
+  // --- ツアー一覧を取得してカレンダーを描画する関数 ---
+  function loadTours(isInLine, isRetry) {
+    fetch(GAS_API_URL + "?action=getAvailableTours")
+      .then(res => res.json())
+      .then(options => {
+        tourData = options;
+
+        // 【ここが肝】通常のブラウザ（LINE外）かつ LINE限定ツアーの場合はスキップ（非表示）
+        filteredTours = options.filter(opt => isInLine || !opt.isLineOnly);
+
+        // 一番早いツアーがある月を初期表示にする
+        if (filteredTours.length > 0) {
+          const first = new Date(filteredTours[0].rawDate);
+          calendarViewDate = new Date(first.getFullYear(), first.getMonth(), 1);
+        }
+
+        // 満席の日程が一定数以上ある場合のみキャンセル待ち案内を表示
+        const soldOutCount = filteredTours.filter(t => t.disabled).length;
+        document.getElementById('waitlistNote').style.display = soldOutCount >= WAITLIST_THRESHOLD ? 'block' : 'none';
+
+        // 初期表示は代表として一番早いツアーの内容を「ツアーのご案内・お持ち物」に反映
+        if (filteredTours.length > 0) updateTourInfoBox(filteredTours[0]);
+
+        renderCalendar();
+      })
+      .catch(err => {
+        console.error(err);
+        if (!isRetry) {
+          // GASが一時的に失敗することがあるため、1回だけ自動で再試行する
+          setTimeout(() => loadTours(isInLine, true), 1000);
+        } else {
+          alert("ツアー一覧の取得に失敗しました。時間をおいて再度お試しください。");
+        }
+      });
+  }
+
+  function toursInMonth(year, month) {
+    return filteredTours.filter(t => {
+      const d = new Date(t.rawDate);
+      return d.getFullYear() === year && d.getMonth() === month;
+    });
+  }
+
+  function renderCalendar() {
+    const year = calendarViewDate.getFullYear();
+    const month = calendarViewDate.getMonth();
+    document.getElementById('calMonthLabel').textContent = year + '年' + (month + 1) + '月';
+
+    const monthTours = toursInMonth(year, month);
+    const tourByDay = {};
+    monthTours.forEach(t => {
+      tourByDay[new Date(t.rawDate).getDate()] = t;
+    });
+
+    const firstWeekday = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    const grid = document.getElementById('calendarGrid');
+    grid.innerHTML = '';
+
+    for (let i = 0; i < firstWeekday; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'cal-cell empty';
+      grid.appendChild(cell);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const cell = document.createElement('div');
+      const tour = tourByDay[day];
+
+      const dayEl = document.createElement('span');
+      dayEl.className = 'cal-day';
+      dayEl.textContent = day;
+      cell.appendChild(dayEl);
+
+      if (tour) {
+        const hasRemaining = typeof tour.remaining === 'number';
+        const isLowStock = hasRemaining && !tour.disabled && tour.remaining > 0 && tour.remaining <= 3;
+
+        cell.className = 'cal-cell ' + (tour.disabled ? 'sold-out' : 'has-tour') + (isLowStock ? ' low-stock' : '');
+
+        const badgeEl = document.createElement('span');
+        badgeEl.className = 'cal-badge';
+        if (tour.disabled) {
+          badgeEl.textContent = '満席';
+        } else if (isLowStock) {
+          badgeEl.textContent = '残' + tour.remaining;
+        }
+        if (badgeEl.textContent) cell.appendChild(badgeEl);
+
+        if (tour.isLineOnly) {
+          const dot = document.createElement('span');
+          dot.className = 'cal-line-dot';
+          cell.appendChild(dot);
+        }
+
+        if (tour.color) {
+          const colorDot = document.createElement('span');
+          colorDot.className = 'cal-tour-dot';
+          colorDot.style.backgroundColor = tour.color;
+          cell.appendChild(colorDot);
+        }
+
+        if (!tour.disabled) {
+          if (tour.value === selectedTourValue) cell.classList.add('selected');
+          cell.addEventListener('click', () => selectTourDate(tour.value));
+        }
+      } else {
+        cell.className = 'cal-cell';
+      }
+      grid.appendChild(cell);
+    }
+
+    const emptyMsg = document.getElementById('calendarEmpty');
+    if (filteredTours.length === 0) {
+      emptyMsg.textContent = '現在開催予定のツアーはありません。';
+      emptyMsg.style.display = 'block';
+    } else if (monthTours.length === 0) {
+      emptyMsg.textContent = 'この月に開催予定のツアーはありません。前後の月をご確認ください。';
+      emptyMsg.style.display = 'block';
+    } else {
+      emptyMsg.style.display = 'none';
+    }
+
+    const legend = document.getElementById('calendarLegend');
+    legend.style.display = monthTours.some(t => t.isLineOnly) ? 'flex' : 'none';
+
+    const tourLegend = document.getElementById('calendarTourLegend');
+    const seen = new Set();
+    const uniqueTours = [];
+    monthTours.forEach(t => {
+      if (t.color && !seen.has(t.tourName)) {
+        seen.add(t.tourName);
+        uniqueTours.push(t);
+      }
+    });
+    if (uniqueTours.length > 0) {
+      tourLegend.innerHTML = '';
+      uniqueTours.forEach(t => {
+        const item = document.createElement('span');
+        item.className = 'legend-item';
+        const swatch = document.createElement('span');
+        swatch.className = 'legend-swatch';
+        swatch.style.backgroundColor = t.color;
+        item.appendChild(swatch);
+        const label = document.createElement('span');
+        label.textContent = t.tourName;
+        item.appendChild(label);
+        tourLegend.appendChild(item);
+      });
+      tourLegend.style.display = 'flex';
+    } else {
+      tourLegend.style.display = 'none';
+    }
+  }
+
+  function changeMonth(delta) {
+    calendarViewDate = new Date(calendarViewDate.getFullYear(), calendarViewDate.getMonth() + delta, 1);
+    renderCalendar();
+  }
+
+  function selectTourDate(value) {
+    const tour = filteredTours.find(t => t.value === value);
+    if (!tour || tour.disabled) return;
+
+    selectedTourValue = value;
+    document.getElementById('tourName').value = tour.tourName;
+    document.getElementById('tourDate').value = tour.date;
+    document.getElementById('tourValue').value = tour.value;
+    document.getElementById('tourError').style.display = 'none';
+
+    const info = document.getElementById('selectedTourInfo');
+    info.style.display = 'block';
+    info.innerHTML = '';
+    if (tour.color) {
+      const dot = document.createElement('span');
+      dot.style.display = 'inline-block';
+      dot.style.width = '8px';
+      dot.style.height = '8px';
+      dot.style.borderRadius = '50%';
+      dot.style.backgroundColor = tour.color;
+      dot.style.marginRight = '6px';
+      dot.style.verticalAlign = 'middle';
+      info.appendChild(dot);
+    }
+    const price = (isInLineFlag && tour.repeaterPrice) ? tour.repeaterPrice : tour.price;
+    const priceText = price ? `　${Number(price).toLocaleString()}円/人` : '';
+    const textSpan = document.createElement('span');
+    textSpan.textContent = '選択中： ' + tour.label + priceText;
+    info.appendChild(textSpan);
+
+    updateParticipantCountOptions(tour);
+    updateTourInfoBox(tour);
+    renderCalendar();
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  }
+
+  function linesToHtml(text) {
+    return String(text).split(/\r\n|\r|\n/).map(escapeHtml).join('<br>');
+  }
+
+  // ツアーのご案内・お持ち物ボックスを、選択中（または代表）のツアー内容に合わせて更新する
+  function updateTourInfoBox(tour) {
+    if (!tour) return;
+
+    const price = (isInLineFlag && tour.repeaterPrice) ? tour.repeaterPrice : tour.price;
+    const feeEl = document.getElementById('policyFee');
+    if (feeEl && price) feeEl.textContent = Number(price).toLocaleString() + '円/人';
+
+    const meetingEl = document.getElementById('policyMeeting');
+    if (meetingEl && (tour.location || tour.time || tour.onsiteLocation)) {
+      let html = escapeHtml(tour.location || '') + ' ' + escapeHtml(tour.time || '') + '集合<br>';
+      html += '同駅 16時半解散<br>';
+      if (tour.onsiteLocation) {
+        const locText = tour.mapLink
+          ? `<a href="${escapeHtml(tour.mapLink)}" target="_blank" rel="noopener noreferrer">${escapeHtml(tour.onsiteLocation)}</a>`
+          : escapeHtml(tour.onsiteLocation);
+        html += 'お車で現地集合の場合、' + locText + 'に' + escapeHtml(tour.onsiteTime || '') + '集合<br>';
+      }
+      html += 'ツアーの進行状況・交通状況次第で30分ほど前後します。';
+      meetingEl.innerHTML = html;
+    }
+
+    const belongingsEl = document.getElementById('policyBelongings');
+    if (belongingsEl && tour.belongings) {
+      belongingsEl.innerHTML = linesToHtml(tour.belongings);
+    }
+
+    const freeRentalsEl = document.getElementById('policyFreeRentals');
+    if (freeRentalsEl && tour.freeRentals) {
+      freeRentalsEl.innerHTML = linesToHtml(tour.freeRentals);
+    }
+  }
+
+  function getSelectedTransportMethod() {
+    const checked = document.querySelector('input[name="transportMethod"]:checked');
+    return checked ? checked.value : '新松田駅集合';
+  }
+
+  // 選択したツアーの残席数に合わせて「参加人数」の選択肢を制限する
+  function updateParticipantCountOptions(tour) {
+    const countSelect = document.getElementById('countSelect');
+    const countHint = document.getElementById('countHint');
+    const hasRemaining = typeof tour.remaining === 'number';
+    const maxAllowed = hasRemaining ? Math.max(1, Math.min(4, tour.remaining)) : 4;
+
+    const currentValue = parseInt(countSelect.value, 10) || 1;
+
+    countSelect.innerHTML = '';
+    for (let n = 1; n <= maxAllowed; n++) {
+      const opt = document.createElement('option');
+      opt.value = n;
+      opt.textContent = n + '名';
+      countSelect.appendChild(opt);
+    }
+
+    if (hasRemaining && tour.remaining < 4) {
+      countHint.textContent = `この日程は残り${tour.remaining}名様までご予約いただけます。`;
+      countHint.style.display = 'block';
+    } else {
+      countHint.style.display = 'none';
+    }
+
+    const newValue = Math.min(currentValue, maxAllowed);
+    countSelect.value = newValue;
+    generateParticipantFields(newValue);
+  }
+
+  function generateParticipantFields(num) {
+    const container = document.getElementById('participantContainer');
+    container.innerHTML = '<h3>参加者情報</h3>';
+    for (let i = 1; i <= num; i++) {
+      container.innerHTML += `
+        <div class="participant-card">
+          <label>${i}人目の氏名</label>
+          <input type="text" class="p-name" maxlength="50" required>
+            <div style="margin-top:10px;">
+              <label>身長(cm)</label>
+              <input type="number" class="p-height" min="50" max="250" required>
+            </div>
+
+            <div style="margin-top:10px;">
+              <label>靴サイズ(cm)</label>
+              <input type="number" class="p-shoe" min="10" max="40" step="0.5" required>
+            </div>
+          </div>`;
+    }
+  }
+
+  // --- 送信処理の修正 ---
+  document.getElementById('resForm').onsubmit = function(e) {
+    e.preventDefault();
+    
+    if (this.hp_job_field.value !== "") {
+      console.warn("Spam detected.");
+      return false;
+    }
+
+    if (!selectedTourValue) {
+      const err = document.getElementById('tourError');
+      err.style.display = 'block';
+      err.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return false;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerText = "送信中...";
+
+    const participants = [];
+    const names = document.querySelectorAll('.p-name');
+    const heights = document.querySelectorAll('.p-height');
+    const shoes = document.querySelectorAll('.p-shoe');
+    
+    names.forEach((n, i) => {
+      participants.push({ 
+        name: n.value.trim().substring(0, 50),
+        height: Number(heights[i].value),
+        shoe: Number(shoes[i].value) 
+      });
+    });
+
+    // 予約データをまとめる
+    const formData = {
+      action: "reserve", // アクションをここに入れる
+      repName: this.repName.value.trim().substring(0, 50),
+      repEmail: this.repEmailField.value ? this.repEmailField.value.trim() : "",
+      repPhone: this.repPhone.value.trim().replace(/[^0-9-]/g, ''),
+      tourDate: this.tourDate.value,
+      tourName: this.tourName.value,
+      tourId: this.tourId.value,
+      transportMethod: getSelectedTransportMethod(),
+      paymentMethod: this.paymentMethod.value,
+      bookingTool: document.getElementById('bookingTool').value,
+      lineUserId: document.getElementById('lineUserId').value,
+      participants: participants
+    };
+
+    // fetchの修正
+    fetch(GAS_API_URL, {
+      method: "POST",
+      mode: "no-cors", // CORSプリフライトを回避
+      cache: "no-cache",
+      // headersは指定しない（no-corsの場合はtext/plain扱いになるため）
+      body: JSON.stringify(formData)
+    })
+    .then(() => {
+      // no-cors の場合レスポンスは読めないが、ここに来れば送信自体は成功している
+      onSuccess();
+    })
+    .catch(err => {
+      console.error("Fetch Error:", err);
+      alert("送信に失敗しました。電波の良い場所で再度お試しください。");
+      btn.disabled = false;
+      btn.innerText = "予約を確定する";
+    });
+  };
+
+  function onSuccess() {
+    // LINEアプリ内で開いているか判定
+  if (liff.isInClient()) {
+    const btn = document.getElementById('submitBtn');
+    btn.innerText = "送信完了！"; // ボタンの文字を変えて達成感を出す
+    
+    setTimeout(() => {
+      liff.closeWindow();
+    }, 1500); // 1秒だけ余韻を残して閉じる
+    } else {
+      // --- 通常ブラウザ（Web）の場合：既存の通り御礼ページを表示 ---
+      document.getElementById('form-wrapper').style.display = 'none';
+      document.getElementById('success-message').style.display = 'block';
+      window.scrollTo(0, 0);
+    }
+  }
+</script>
+</body>
+</html>

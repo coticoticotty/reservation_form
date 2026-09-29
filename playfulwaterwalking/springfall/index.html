@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PlayfulWaterWalking［春・秋］｜ひらく つながる</title>
+<meta name="description" content="神奈川県西丹沢の沢を歩く、春・秋の1DAY川歩きリトリート。エクササイズ、沢歩き、焚き火。少人数制。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f3ec;
+    --paper:#fffdf8;
+    --ink:#2b2f2a;
+    --muted:#6b7068;
+    --line:#dcd6c8;
+    --moss:#4f6b4a;
+    --moss-deep:#33462f;
+    --water:#5b8a8c;
+    --leaf:#c0763a;      /* 秋の色づき */
+    --blossom:#d9a0a0;   /* 春の気配 */
+    --serif:"Noto Serif JP", serif;
+    --sans:"Noto Sans JP", system-ui, sans-serif;
+    --latin:"Cormorant Garamond", "Noto Serif JP", serif;
+    --wrap:1040px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.9;letter-spacing:.04em;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  img{max-width:100%;display:block}
+  a{color:inherit}
+  .wrap{max-width:var(--wrap);margin:0 auto;padding:0 20px}
+  section{padding:96px 0}
+  .eyebrow{font-family:var(--latin);font-style:italic;font-size:1.05rem;color:var(--water);letter-spacing:.08em;display:block;margin-bottom:8px}
+  h2{font-family:var(--serif);font-weight:500;font-size:clamp(1.5rem,4vw,2rem);letter-spacing:.12em;line-height:1.6;margin-bottom:40px}
+  .center{text-align:center}
+
+  /* ---------- header ---------- */
+  .site-header{position:fixed;inset:0 0 auto 0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:14px 20px;transition:background .3s, box-shadow .3s}
+  .site-header.scrolled{background:rgba(246,243,236,.94);box-shadow:0 1px 0 var(--line)}
+  .logo{font-family:var(--latin);font-size:1.25rem;letter-spacing:.06em;text-decoration:none;color:#fff;transition:color .3s}
+  .site-header.scrolled .logo{color:var(--ink)}
+  .btn{display:inline-block;background:var(--moss);color:#fff;text-decoration:none;font-weight:500;letter-spacing:.1em;border-radius:999px;padding:12px 28px;transition:background .2s, transform .2s}
+  .btn:hover{background:var(--moss-deep);transform:translateY(-1px)}
+  .btn.small{padding:8px 18px;font-size:.85rem}
+  .btn.large{padding:18px 44px;font-size:1.05rem}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;min-height:62svh;display:flex;align-items:flex-end;color:#fff;padding:96px 0 8vh}
+  .hero::before{content:"";position:absolute;inset:0;background:url("https://hitotowa.info/playfulwaterwalking/images/web/header-poster.jpg") center/cover no-repeat}
+  .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,30,20,.15) 0%,rgba(20,30,20,.25) 45%,rgba(20,30,20,.7) 100%)}
+  .hero .wrap{position:relative;z-index:1;width:100%}
+  .hero-title{font-family:var(--latin);font-weight:500;font-size:clamp(2.2rem,8vw,4.4rem);line-height:1.1;letter-spacing:.02em}
+  .hero-season{display:inline-block;font-family:var(--serif);font-size:clamp(1rem,3vw,1.3rem);letter-spacing:.3em;border:1px solid rgba(255,255,255,.7);padding:2px 10px 2px 14px;margin:14px 0 26px}
+  .hero-catch{font-family:var(--serif);font-weight:500;font-size:clamp(1.8rem,6vw,3rem);letter-spacing:.3em;line-height:1.5}
+  .hero-sub{margin-top:18px;font-size:clamp(.9rem,2.6vw,1.05rem);letter-spacing:.12em;opacity:.95}
+  .scroll-hint{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);z-index:1;font-family:var(--latin);font-size:.8rem;letter-spacing:.2em;opacity:.8}
+
+  /* ---------- intro ---------- */
+  .intro{background:var(--paper)}
+  .intro-body{font-family:var(--serif);font-size:clamp(1rem,3.4vw,1.15rem);line-height:2.3;letter-spacing:.14em;text-align:center}
+  .intro-body p{margin-bottom:2.4em}
+  .intro-body .season{color:var(--moss)}
+  .intro-body .close{font-size:clamp(1.25rem,4.4vw,1.6rem);letter-spacing:.3em;margin-top:3.2em}
+  .intro-body .close span{display:block}
+  .intro-body .invite{font-size:clamp(1rem,3.4vw,1.15rem);letter-spacing:.14em;margin-top:.8em}
+  .intro-photo{margin:72px auto 0;max-width:820px;aspect-ratio:16/9;border-radius:6px;background:url("https://hitotowa.info/playfulwaterwalking/images/web/concept.jpg") center/cover no-repeat}
+
+  /* ---------- program ---------- */
+  .program-list{display:grid;gap:56px}
+  .step{display:grid;gap:24px;align-items:center}
+  .step-photo{aspect-ratio:4/3;border-radius:6px;background:#cfd6c8 center/cover no-repeat;overflow:hidden}
+  .step-photo svg{width:100%;height:100%;display:block}
+  .fig{fill:none;stroke:#33462f;stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+  .head{fill:#33462f}
+  .helmet{fill:#c0763a}
+  .step-num{font-family:var(--latin);font-size:3rem;line-height:1;color:var(--leaf)}
+  .step h3{font-family:var(--serif);font-weight:500;font-size:1.35rem;letter-spacing:.1em;margin:8px 0 14px}
+  .step p{color:var(--ink)}
+  .note{font-size:.88rem;color:var(--muted);margin-top:10px}
+  @media (min-width:760px){
+    .step{grid-template-columns:1fr 1fr;gap:48px}
+    .step:nth-child(even) .step-photo{order:2}
+  }
+
+  /* ---------- courses ---------- */
+  .courses{background:var(--paper)}
+  .course-lead{text-align:center;margin:-16px auto 44px;max-width:640px;color:var(--muted)}
+  .course-grid{display:grid;gap:20px}
+  @media (min-width:860px){.course-grid{grid-template-columns:repeat(3,1fr)}}
+  .course{border:1px solid var(--line);border-radius:6px;padding:28px 24px;background:var(--bg);display:flex;flex-direction:column}
+  .course-label{font-family:var(--latin);font-size:1.6rem;color:var(--water);letter-spacing:.06em}
+  .course h3{font-family:var(--serif);font-weight:500;font-size:1.1rem;letter-spacing:.08em;margin:2px 0 16px;line-height:1.7}
+  .stats{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+  .stat{flex:1;min-width:110px;background:var(--paper);border-radius:4px;padding:10px 12px;text-align:center}
+  .stat b{display:block;font-family:var(--serif);font-weight:500;font-size:1.25rem;letter-spacing:.04em}
+  .stat small{font-size:.75rem;color:var(--muted)}
+  .course p{font-size:.95rem}
+  .tag{display:inline-block;font-size:.75rem;letter-spacing:.08em;border:1px solid var(--leaf);color:var(--leaf);border-radius:999px;padding:1px 10px;margin-top:16px;align-self:flex-start}
+
+  /* ---------- schedule ---------- */
+  .timeline{max-width:620px;margin:0 auto;list-style:none;position:relative}
+  .timeline::before{content:"";position:absolute;left:78px;top:10px;bottom:10px;width:1px;background:var(--line)}
+  .timeline li{display:grid;grid-template-columns:64px 1fr;gap:30px;padding:12px 0;position:relative}
+  .timeline li::before{content:"";position:absolute;left:74px;top:23px;width:9px;height:9px;border-radius:50%;background:var(--paper);border:2px solid var(--moss)}
+  .timeline li.key::before{background:var(--moss)}
+  .timeline time{font-family:var(--latin);font-size:1.15rem;text-align:right;color:var(--moss)}
+  .timeline .note{margin-top:28px;text-align:center}
+
+  /* ---------- guide ---------- */
+  .guide{background:var(--moss-deep);color:#f3f0e6}
+  .guide .eyebrow{color:#b9cfc9}
+  .guide-inner{display:grid;gap:40px;align-items:center}
+  @media (min-width:760px){.guide-inner{grid-template-columns:320px 1fr;gap:64px}}
+  .guide-photo{aspect-ratio:1/1;border-radius:50%;max-width:300px;width:100%;margin:0 auto;background:url("https://hitotowa.info/playfulwaterwalking/images/web/guide.jpg") center/cover no-repeat}
+  .guide-text p{margin-bottom:1.4em;font-family:var(--serif);letter-spacing:.1em;line-height:2.2}
+  .guide-text .quote{font-size:1.15rem}
+  .guide-text .invite{margin-bottom:0}
+
+  /* ---------- faq ---------- */
+  .faq{background:var(--paper)}
+  .faq-list{max-width:780px;margin:0 auto;border-top:1px solid var(--line)}
+  .faq details{border-bottom:1px solid var(--line)}
+  .faq summary{list-style:none;cursor:pointer;display:flex;gap:14px;align-items:flex-start;padding:20px 40px 20px 4px;position:relative;font-weight:500;letter-spacing:.06em;line-height:1.7}
+  .faq summary::-webkit-details-marker{display:none}
+  .faq summary::after{content:"";position:absolute;right:12px;top:28px;width:10px;height:10px;border-right:2px solid var(--moss);border-bottom:2px solid var(--moss);transform:rotate(45deg);transition:transform .25s}
+  .faq details[open] summary::after{transform:rotate(-135deg);top:32px}
+  .faq .q,.faq .a{font-family:var(--latin);font-size:1.4rem;line-height:1.1;flex:none;width:20px}
+  .faq .q{color:var(--moss)}
+  .faq .a{color:var(--leaf)}
+  .faq .answer{display:flex;gap:14px;padding:0 8px 24px 4px;color:var(--ink);font-size:.95rem}
+
+  /* ---------- overview ---------- */
+  .overview dl{max-width:780px;margin:0 auto;border-top:1px solid var(--line)}
+  .overview .row{display:grid;gap:4px;padding:18px 4px;border-bottom:1px solid var(--line)}
+  @media (min-width:640px){.overview .row{grid-template-columns:150px 1fr;gap:24px}}
+  .overview dt{font-weight:700;color:var(--moss);letter-spacing:.1em}
+  .overview dd ul{padding-left:1.2em}
+  .price-old{text-decoration:line-through;color:var(--muted);margin-right:8px}
+  .price-new{font-family:var(--serif);font-size:1.4rem;color:var(--leaf);font-weight:600}
+  .badge{display:inline-block;background:var(--leaf);color:#fff;font-size:.75rem;border-radius:3px;padding:1px 8px;margin-right:8px;vertical-align:middle;letter-spacing:.08em}
+
+  /* ---------- cta ---------- */
+  .cta{position:relative;color:#fff;text-align:center;padding:120px 0}
+  .cta::before{content:"";position:absolute;inset:0;background:url("https://hitotowa.info/playfulwaterwalking/images/web/overview-bottom.jpg") center/cover no-repeat}
+  .cta::after{content:"";position:absolute;inset:0;background:rgba(25,38,26,.55)}
+  .cta .wrap{position:relative;z-index:1}
+  .cta-catch{font-family:var(--serif);font-size:clamp(1.4rem,5vw,2rem);letter-spacing:.3em;line-height:1.8;margin-bottom:12px}
+  .cta p{margin-bottom:36px;letter-spacing:.12em}
+  .cta .btn{background:#fff;color:var(--moss-deep)}
+  .cta .btn:hover{background:#eef2ea}
+
+  footer{padding:32px 0;text-align:center;font-size:.8rem;color:var(--muted)}
+
+  /* fade-in */
+  .reveal{opacity:0;transform:translateY(16px);transition:opacity .9s ease, transform .9s ease}
+  .reveal.on{opacity:1;transform:none}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}html{scroll-behavior:auto}}
+
+  @media (max-width:520px){
+    section{padding:72px 0}
+    .timeline::before{left:66px}
+    .timeline li{grid-template-columns:52px 1fr;gap:28px}
+    .timeline li::before{left:62px}
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header" id="header">
+  <a class="logo" href="#top">Playful Water Walking</a>
+  <a class="btn small" href="https://hitotowa.info/playfulwaterwalking/reserve/">申し込む</a>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <h1 class="hero-title">Playful<br>Water Walking</h1>
+    <span class="hero-season">春・秋</span>
+    <p class="hero-catch">ひらく　つながる</p>
+    <p class="hero-sub">神奈川県西丹沢の沢を歩く、1DAY川歩きリトリート</p>
+  </div>
+  <span class="scroll-hint">scroll</span>
+</section>
+
+<!-- ============ INTRO ============ -->
+<section class="intro">
+  <div class="wrap">
+    <div class="intro-body reveal">
+      <p>「私って、何がしたいんだっけ？」<br>「何が楽しいんだっけ？」</p>
+      <p>真面目に考えるほど、<br>答えは遠くなる。</p>
+      <p>頭ではなく、身体で探しにいこう。</p>
+      <p class="season">春の新緑。<br>秋の色づく森。<br>ひんやりとした沢の水。</p>
+      <p>川を歩く。<br>じゃばじゃば進む。<br>一歩踏み込むその度に、<br>なぜだか心が浮き立つ。</p>
+      <p>「あっちに行ってみたい」<br>気づけば、好奇心がひらいている。</p>
+      <p>ただ自然の中で過ごすだけで<br>僕らは自分自身になれる。<br>そのままで人とつながれる。</p>
+      <p class="close"><span>ひらく。</span><span>つながる。</span></p>
+      <p class="invite">一緒に川を歩きましょう。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROGRAM ============ -->
+<section class="program" id="program">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="eyebrow">Contents</span>
+      <h2>コンテンツ</h2>
+    </div>
+    <div class="program-list">
+      <div class="step reveal">
+        <div class="step-photo" role="img" aria-label="河原でエクササイズをするイラスト">
+          <svg viewBox="0 0 400 300" aria-hidden="true">
+            <rect width="400" height="300" fill="#e9ede3"/>
+            <circle cx="318" cy="62" r="24" fill="#f3e2c0"/>
+            <path d="M0 170 Q70 110 150 150 T300 130 T400 140 V300 H0Z" fill="#c9d4bf"/>
+            <g fill="#8fa585">
+              <path d="M40 170 L58 118 L76 170Z"/><path d="M66 172 L82 130 L98 172Z"/>
+              <path d="M300 150 L318 100 L336 150Z"/><path d="M330 154 L346 114 L362 154Z"/>
+            </g>
+            <path d="M0 196 Q200 180 400 196 V300 H0Z" fill="#dcd2bb"/>
+            <path d="M0 256 Q100 244 200 254 T400 250 V300 H0Z" fill="#b7d0cf"/>
+            <path d="M40 272 h40 M150 282 h56 M270 270 h46" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"/>
+            <g fill="#b5ad97"><ellipse cx="62" cy="236" rx="16" ry="7"/><ellipse cx="350" cy="240" rx="20" ry="8"/></g>
+            <!-- standing, arms up -->
+            <circle class="head" cx="200" cy="120" r="12"/>
+            <path class="fig" d="M200 134 V190 M200 190 L188 230 M200 190 L212 230 M200 150 L170 122 M200 150 L230 122"/>
+            <!-- sitting left -->
+            <circle class="head" cx="118" cy="176" r="11"/>
+            <path class="fig" d="M118 189 L122 216 L150 216 L150 232 M120 198 L140 210"/>
+            <!-- sitting right -->
+            <circle class="head" cx="282" cy="176" r="11"/>
+            <path class="fig" d="M282 189 L278 216 L250 216 L250 232 M280 198 L260 210"/>
+          </svg>
+        </div>
+        <div>
+          <span class="step-num">01</span>
+          <h3>エクササイズ＆チェックイン</h3>
+          <p>思考を静め、身体感覚をより感じられるようなエクササイズをした後、参加者同士での自己紹介＆今あることを分かち合うときを過ごします。</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-photo" role="img" aria-label="滝を目指して沢を歩くイラスト">
+          <svg viewBox="0 0 400 300" aria-hidden="true">
+            <rect width="400" height="300" fill="#e9ede3"/>
+            <path d="M0 0 H178 L184 160 L150 190 L0 230Z" fill="#7d9674"/>
+            <path d="M400 0 H222 L216 160 L250 190 L400 230Z" fill="#7d9674"/>
+            <g fill="#5f7a58">
+              <path d="M20 90 L40 40 L60 90Z"/><path d="M60 110 L78 64 L96 110Z"/><path d="M110 70 L126 30 L142 70Z"/>
+              <path d="M300 80 L318 34 L336 80Z"/><path d="M340 110 L358 64 L376 110Z"/><path d="M256 60 L272 22 L288 60Z"/>
+            </g>
+            <rect x="184" y="20" width="32" height="142" fill="#f3f6f2"/>
+            <path d="M192 30 V150 M200 24 V156 M208 30 V150" stroke="#cfe0de" stroke-width="3"/>
+            <ellipse cx="200" cy="166" rx="40" ry="10" fill="#dfeceb"/>
+            <path d="M178 166 Q120 230 30 300 H370 Q280 230 222 166Z" fill="#b7d0cf"/>
+            <path d="M150 200 h24 M226 208 h22 M110 250 h34 M250 262 h40 M180 282 h40" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+            <g fill="#b5ad97"><ellipse cx="96" cy="262" rx="20" ry="9"/><ellipse cx="300" cy="228" rx="16" ry="7"/><ellipse cx="238" cy="190" rx="10" ry="5"/></g>
+            <!-- walker front -->
+            <ellipse cx="160" cy="262" rx="20" ry="4" fill="none" stroke="#fff" stroke-width="2.5"/>
+            <circle class="head" cx="160" cy="200" r="11"/>
+            <path class="helmet" d="M148 198 A12 12 0 0 1 172 198Z"/>
+            <path class="fig" d="M160 213 V240 M160 240 L152 260 M160 240 L170 258 M160 220 L146 236 M160 220 L176 230"/>
+            <!-- walker back -->
+            <g transform="translate(228 196) scale(.72)">
+              <ellipse cx="0" cy="62" rx="20" ry="4" fill="none" stroke="#fff" stroke-width="3"/>
+              <circle class="head" cx="0" cy="0" r="11"/>
+              <path class="helmet" d="M-12 -2 A12 12 0 0 1 12 -2Z"/>
+              <path class="fig" d="M0 13 V40 M0 40 L-8 60 M0 40 L10 58 M0 20 L-16 30 M0 20 L14 36"/>
+            </g>
+          </svg>
+        </div>
+        <div>
+          <span class="step-num">02</span>
+          <h3>沢歩き</h3>
+          <p>大きな滝があるところまで、川をゆっくり遡行します。</p>
+          <p class="note">※コースによっては、堰堤を越えるために登山道を登ったり、岩を少しだけよじ登ったりする必要があります。</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-photo" role="img" aria-label="焚き火を囲んで語り合うイラスト">
+          <svg viewBox="0 0 400 300" aria-hidden="true">
+            <rect width="400" height="300" fill="#efe6d6"/>
+            <g fill="#a9b89c">
+              <path d="M10 200 L36 110 L62 200Z"/><path d="M50 200 L72 130 L94 200Z"/><path d="M90 200 L108 146 L126 200Z"/>
+              <path d="M280 200 L298 146 L316 200Z"/><path d="M308 200 L330 124 L352 200Z"/><path d="M344 200 L370 104 L396 200Z"/>
+            </g>
+            <path d="M0 196 Q200 182 400 196 V300 H0Z" fill="#dcd2bb"/>
+            <circle cx="200" cy="218" r="62" fill="#f3d3a8" opacity=".55"/>
+            <path d="M172 250 L228 232 M172 232 L228 250" stroke="#7a5a3a" stroke-width="8" stroke-linecap="round"/>
+            <path d="M200 176 C214 196 226 208 222 226 C219 240 181 240 178 226 C174 210 190 202 200 176Z" fill="#c0763a"/>
+            <path d="M200 202 C208 212 212 220 210 228 C208 236 192 236 190 228 C188 220 196 214 200 202Z" fill="#e8b04a"/>
+            <g fill="#e8b04a"><circle cx="186" cy="168" r="2.5"/><circle cx="216" cy="158" r="2"/><circle cx="204" cy="146" r="2.5"/></g>
+            <!-- left pair -->
+            <circle class="head" cx="92" cy="200" r="11"/>
+            <path class="fig" d="M92 213 L96 240 L124 240 L124 256 M94 222 L116 232"/>
+            <circle class="head" cx="138" cy="186" r="10"/>
+            <path class="fig" d="M138 198 L141 222 L160 226 L162 240 M139 206 L156 214"/>
+            <!-- right pair -->
+            <circle class="head" cx="308" cy="200" r="11"/>
+            <path class="fig" d="M308 213 L304 240 L276 240 L276 256 M306 222 L284 232"/>
+            <circle class="head" cx="262" cy="186" r="10"/>
+            <path class="fig" d="M262 198 L259 222 L240 226 L238 240 M261 206 L244 214"/>
+          </svg>
+        </div>
+        <div>
+          <span class="step-num">03</span>
+          <h3>チェックアウト＆焚き火</h3>
+          <p>自然で遊び、解放しきった身体で、今日の体験を火を囲みながら共有します。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COURSES ============ -->
+<section class="courses" id="courses">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="eyebrow">Courses</span>
+      <h2>3つのコース</h2>
+    </div>
+    <p class="course-lead reveal">どのコースも、大きな滝を目指して沢をゆっくり遡行します。</p>
+    <div class="course-grid">
+      <article class="course reveal">
+        <span class="course-label">Course A</span>
+        <h3>飽きない美しい渓相の沢</h3>
+        <div class="stats">
+          <div class="stat"><b>約190m</b><small>高低差</small></div>
+          <div class="stat"><b>約3km</b><small>歩く距離</small></div>
+        </div>
+        <p>夏の川遊びツアーでも使っている沢を歩きます。飽きない美しい渓相が魅力。夏のツアーでは行かない天然の大滝のところまで、ゆっくりと川を遡行します。</p>
+      </article>
+      <article class="course reveal">
+        <span class="course-label">Course B</span>
+        <h3>高さ40mの大滝を目指す沢</h3>
+        <div class="stats">
+          <div class="stat"><b>約200m</b><small>高低差</small></div>
+          <div class="stat"><b>約3km</b><small>歩く距離</small></div>
+        </div>
+        <p>西丹沢ビジターセンターほど近くの沢を歩きます。綺麗な渓相を楽しみながら、40mの高さの大滝まで川をゆっくり遡行します。それなりの高低差と途中の堰堤越えで、一定の体力を使います。</p>
+      </article>
+      <article class="course reveal">
+        <span class="course-label">Course C</span>
+        <h3>大迫力の大滝を目指す沢</h3>
+        <div class="stats">
+          <div class="stat"><b>約170m</b><small>高低差</small></div>
+          <div class="stat"><b>約3km</b><small>歩く距離</small></div>
+        </div>
+        <p>西丹沢の奥の奥の沢を歩きます。前半は開けた河原を、後半は静かな森の中を流れる川を遡行し、高さ30mの大迫力の大滝を目指します。</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SCHEDULE ============ -->
+<section class="schedule" id="schedule">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="eyebrow">Schedule</span>
+      <h2>スケジュール</h2>
+    </div>
+    <ol class="timeline reveal">
+      <li><time>9:45</time><span>小田急線 新松田駅 集合</span></li>
+      <li><time>10:45</time><span>現地集合</span></li>
+      <li class="key"><time>11:00</time><span>エクササイズ＆チェックイン</span></li>
+      <li class="key"><time>11:30</time><span>沢歩き開始</span></li>
+      <li><time>13:00</time><span>川辺でお昼ご飯</span></li>
+      <li class="key"><time>15:00</time><span>沢歩き終了＆焚き火</span></li>
+      <li><time>15:45</time><span>現地出発</span></li>
+      <li><time>16:45</time><span>小田急線 新松田駅 解散</span></li>
+    </ol>
+    <p class="note center">※ツアーの進行状況、交通状況等により前後します。</p>
+  </div>
+</section>
+
+<!-- ============ GUIDE ============ -->
+<section class="guide" id="guide">
+  <div class="wrap guide-inner">
+    <div class="guide-photo reveal" role="img" aria-label="ガイドの写真"></div>
+    <div class="guide-text reveal">
+      <span class="eyebrow">Guide</span>
+      <h2>ガイド</h2>
+      <p>1991年生まれ、35歳。<br>エンジニアを辞めて、川遊びのガイドになりました。</p>
+      <p>多くの人と川で遊ぶ中で<br>確信したことがあります。</p>
+      <p class="quote">それは、<br>川で遊んでいると誰もが勝手に<br>自分らしくなっていくということ。</p>
+      <p>頭で考えて悩む必要なんて何もない。<br>川で過ごしたその体験が<br>すべて教えてくれます。</p>
+      <p class="invite">一緒に川遊びしませんか？</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="faq" id="faq">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="eyebrow">FAQ</span>
+      <h2>よくある質問</h2>
+    </div>
+    <div class="faq-list reveal">
+      <details>
+        <summary><span class="q">Q</span><span>1人で参加しても大丈夫ですか？</span></summary>
+        <div class="answer"><span class="a">A</span><p>お一人でのご参加、大歓迎です。少人数制で参加者間の交流も重視していますし、一緒に川で遊ぶと不思議な一体感が生まれます。むしろ、日常の関係性（仕事や家族の役割）から一歩離れた場所で、ただ「わたし自身」を感じるためにも、お一人でのご参加はとてもおすすめです。</p></div>
+      </details>
+      <details>
+        <summary><span class="q">Q</span><span>子ども連れで参加できますか？</span></summary>
+        <div class="answer"><span class="a">A</span><p>大変恐れ入りますが、当プログラムは高校生以上の方を対象としております。コース自体は小学生でも歩ける安全な場所ですが、このリトリートは「大人が日常の役割をオフにして、自分自身を省みること」を何より大切にしているためです。</p></div>
+      </details>
+      <details>
+        <summary><span class="q">Q</span><span>体力に自信がないのですが大丈夫ですか？</span></summary>
+        <div class="answer"><span class="a">A</span><p>基本的にゆっくり歩きますが、コースによってはそれなりの高低差があったり、岩を少しだけよじ登ったりする必要があるため、一定の体力を使います。必要な方はご相談ください。</p></div>
+      </details>
+      <details>
+        <summary><span class="q">Q</span><span>雨の日でも開催しますか？</span></summary>
+        <div class="answer"><span class="a">A</span><p>多少の雨であれば開催しますが、増水の可能性があるなど、危険が予測される場合は安全を最優先して中止とさせていただきます。その場合、キャンセル料は一切かかりませんのでご安心ください。開催の判断は可能であれば、前日の19時までに、難しければ当日の朝、個別にご連絡いたします。</p></div>
+      </details>
+      <details>
+        <summary><span class="q">Q</span><span>トイレ＆着替え場所はありますか？</span></summary>
+        <div class="answer"><span class="a">A</span><p>いずれのコースもキャンプ場を拠点としますので、トイレも着替え場所もあります。</p></div>
+      </details>
+      <details>
+        <summary><span class="q">Q</span><span>車で現地集合の場合、道は狭いですか？</span></summary>
+        <div class="answer"><span class="a">A</span><p>丹沢湖から現地の駐車場までの道のりに、車1台分の幅しかない箇所が数か所あります。道幅自体はそれほど狭くはなく、対向車さえいなければ基本的には問題なく通行できますし、すべて舗装された道路で、林道や山道を通ることもありません。とはいえ、運転に自信がない方には少し緊張する道のりかもしれません。ご不安な場合は、無理をせず新松田駅集合をお選びください。</p></div>
+      </details>
+      <details>
+        <summary><span class="q">Q</span><span>クマは出ますか？</span></summary>
+        <div class="answer"><span class="a">A</span><p>めったに出会うことはありませんが、野生のフィールドであることをご理解ください。プログラムを行うエリアは道路や登山道に隣接しており、人の往来が比較的多いため、私自身もこれまでに遭遇したことはありません。ただし、クマが生息している山域であることは確かですので、「100%絶対に遭遇しない」と言い切ることはできません。ご不安な場合はいつでもご相談ください。</p></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ OVERVIEW ============ -->
+<section class="overview" id="overview">
+  <div class="wrap">
+    <div class="center reveal">
+      <span class="eyebrow">Overview</span>
+      <h2>開催概要</h2>
+    </div>
+    <dl class="reveal">
+      <div class="row"><dt>開催日程</dt><dd>週2〜3回</dd></div>
+      <div class="row"><dt>料金</dt><dd><span class="badge">モニター価格</span><span class="price-old">14,000円</span><span class="price-new">7,000円</span> / 1人</dd></div>
+      <div class="row"><dt>支払方法</dt><dd>事前決済（銀行振込 or クレジット）</dd></div>
+      <div class="row"><dt>定員</dt><dd>各回4〜6名（少人数制）</dd></div>
+      <div class="row"><dt>対象</dt><dd>高校生以上</dd></div>
+      <div class="row"><dt>無料レンタル</dt><dd>ウェットパンツ、沢靴、沢用靴下、ヘルメット</dd></div>
+      <div class="row"><dt>持ち物</dt><dd><ul>
+        <li>飲み物</li>
+        <li>お昼ご飯（持ち運びやすいもの）</li>
+        <li>着替え一式＆タオル（全身濡れる可能性あり）</li>
+        <li>レインウェア or ウィンドブレーカー（上に羽織りやすく、風を通さない生地がベスト）</li>
+      </ul></dd></div>
+      <div class="row"><dt>集合・解散</dt><dd>小田急線新松田駅南口 9:45集合 / 同駅 16:45解散<br><span class="note">現地集合の場合は、西丹沢ビジターセンター近辺のキャンプ場に10:45集合（コースによって異なります）。<br>※ツアーの進行状況、交通状況等により前後します。</span></dd></div>
+    </dl>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="cta">
+  <div class="wrap reveal">
+    <p class="cta-catch">ひらく。つながる。</p>
+    <p>一緒に川を歩きましょう。</p>
+    <a class="btn large" href="https://hitotowa.info/playfulwaterwalking/reserve/">ツアーに申し込む</a>
+  </div>
+</section>
+
+<footer>© hitotowa / Playful Water Walking</footer>
+
+<script>
+  (function(){
+    var h=document.getElementById('header');
+    function onScroll(){h.classList.toggle('scrolled',window.scrollY>window.innerHeight*0.6)}
+    window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+    var els=document.querySelectorAll('.reveal');
+    if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('on')});return}
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){if(en.isIntersecting){en.target.classList.add('on');io.unobserve(en.target)}})
+    },{threshold:.15});
+    els.forEach(function(e){io.observe(e)});
+  })();
+</script>
+</body>
+</html>
