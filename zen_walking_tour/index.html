@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-YQDJ8EQFVZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-YQDJ8EQFVZ');
+</script>
   <base target="_top">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -750,6 +759,13 @@
     })
     .then(() => {
       // no-cors の場合レスポンスは読めないが、ここに来れば送信自体は成功している
+      gtag('event', 'generate_lead', {
+        tour_name: formData.tourName,
+        tour_date: formData.tourDate,
+        participants: participants.length,
+        value: (Number(formData.tourPrice) || 0) * participants.length,
+        currency: 'JPY'
+      });
       onSuccess();
     })
     .catch(err => {

@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-YQDJ8EQFVZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-YQDJ8EQFVZ');
+</script>
   <base target="_top">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -925,6 +934,16 @@ window.onload = function() {
     })
     .then(() => {
       // no-cors の場合レスポンスは読めないが、ここに来れば送信自体は成功している
+      const bookedTour = filteredTours.find(t => t.value === selectedTourValue) || {};
+      const unitPrice = Number((isInLineFlag && bookedTour.repeaterPrice) ? bookedTour.repeaterPrice : bookedTour.price) || 0;
+      gtag('event', 'generate_lead', {
+        tour_name: formData.tourName,
+        tour_date: formData.tourDate,
+        participants: participants.length,
+        booking_tool: formData.bookingTool,
+        value: unitPrice * participants.length,
+        currency: 'JPY'
+      });
       onSuccess();
     })
     .catch(err => {
