@@ -65,7 +65,8 @@
 
   /* ---------- hero ---------- */
   .hero{position:relative;min-height:62svh;display:flex;align-items:flex-end;color:#fff;padding:96px 0 8vh}
-  .hero::before{content:"";position:absolute;inset:0;background:url("https://hitotowa.info/playfulwaterwalking/images/web/header-poster.jpg") center/cover no-repeat}
+  .hero::before{content:"";position:absolute;inset:0;background:url("../images/web/springfall-hero-poster.jpg") center/cover no-repeat}
+  .hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
   .hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,30,20,.15) 0%,rgba(20,30,20,.25) 45%,rgba(20,30,20,.7) 100%)}
   .hero .wrap{position:relative;z-index:1;width:100%}
   .hero-title{font-family:var(--latin);font-weight:500;font-size:clamp(2.2rem,8vw,4.4rem);line-height:1.1;letter-spacing:.02em}
@@ -193,6 +194,9 @@
 
 <!-- ============ HERO ============ -->
 <section class="hero" id="top">
+  <video class="hero-video" poster="../images/web/springfall-hero-poster.jpg" autoplay muted loop playsinline preload="auto">
+    <source src="../images/web/springfall-hero.mp4" type="video/mp4">
+  </video>
   <div class="wrap">
     <h1 class="hero-title">Playful<br>Water Walking</h1>
     <span class="hero-season">春・秋</span>
