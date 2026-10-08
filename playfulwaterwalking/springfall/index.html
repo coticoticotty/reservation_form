@@ -72,7 +72,7 @@
   .hero-title{font-family:var(--latin);font-weight:500;font-size:clamp(2.2rem,8vw,4.4rem);line-height:1.1;letter-spacing:.02em}
   .hero-season{display:inline-block;font-family:var(--serif);font-size:clamp(1rem,3vw,1.3rem);letter-spacing:.3em;border:1px solid rgba(255,255,255,.7);padding:2px 10px 2px 14px;margin:14px 0 26px}
   .hero-catch{font-family:var(--serif);font-weight:500;font-size:clamp(1.8rem,6vw,3rem);letter-spacing:.3em;line-height:1.5}
-  .hero-catch span,.hero-sub span,.cta-catch span{display:inline-block}
+  .hero-catch span,.hero-sub span{display:inline-block}
   .hero-sub{margin-top:18px;font-size:clamp(.9rem,2.6vw,1.05rem);letter-spacing:.12em;opacity:.95}
   .scroll-hint{position:absolute;left:50%;bottom:24px;transform:translateX(-50%);z-index:1;font-family:var(--latin);font-size:.8rem;letter-spacing:.2em;opacity:.8}
 
@@ -156,14 +156,8 @@
   .badge{display:inline-block;background:var(--leaf);color:#fff;font-size:.75rem;border-radius:3px;padding:1px 8px;margin-right:8px;vertical-align:middle;letter-spacing:.08em}
 
   /* ---------- cta ---------- */
-  .cta{position:relative;color:#fff;text-align:center;padding:120px 0}
-  .cta::before{content:"";position:absolute;inset:0;background:url("https://hitotowa.info/playfulwaterwalking/images/web/overview-bottom.jpg") center/cover no-repeat}
-  .cta::after{content:"";position:absolute;inset:0;background:rgba(25,38,26,.55)}
-  .cta .wrap{position:relative;z-index:1}
-  .cta-catch{font-family:var(--serif);font-size:clamp(1.4rem,5vw,2rem);letter-spacing:.3em;line-height:1.8;margin-bottom:12px}
-  .cta p{margin-bottom:36px;letter-spacing:.12em}
-  .cta .btn{background:#fff;color:var(--moss-deep)}
-  .cta .btn:hover{background:#eef2ea}
+  .overview-cta{text-align:center;margin-top:56px}
+  .overview-cta .note{margin-top:20px}
 
   footer{padding:32px 0;text-align:center;font-size:.8rem;color:var(--muted)}
 
@@ -392,15 +386,10 @@
       </ul></dd></div>
       <div class="row"><dt>集合・解散</dt><dd>小田急線新松田駅南口 9:45集合 / 同駅 16:45解散<br><span class="note">現地集合の場合は、西丹沢ビジターセンター近辺のキャンプ場に10:45集合（コースによって異なります）。<br>※ツアーの進行状況、交通状況等により前後します。</span></dd></div>
     </dl>
-  </div>
-</section>
-
-<!-- ============ CTA ============ -->
-<section class="cta">
-  <div class="wrap reveal">
-    <p class="cta-catch"><span>沢を歩く</span>　<span>滝に出会う</span></p>
-    <p>一緒に川を歩きましょう。</p>
-    <a class="btn large" href="https://hitotowa.info/playfulwaterwalking/reserve/">ツアーに申し込む</a>
+    <div class="overview-cta reveal">
+      <a class="btn large" href="https://hitotowa.info/playfulwaterwalking/reserve/">ツアーに申し込む</a>
+      <p class="note">少人数制のため、ご予約はお早めに。</p>
+    </div>
   </div>
 </section>
 
