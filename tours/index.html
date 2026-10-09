@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-YQDJ8EQFVZ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-YQDJ8EQFVZ');
+</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ツアー一覧｜Playful Water Walking</title>
+<meta name="description" content="神奈川県西丹沢の川で過ごす、Playful Water Walkingの季節のツアー一覧。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://hitotowa.info/tours/">
+<meta property="og:title" content="ツアー一覧｜Playful Water Walking">
+<meta property="og:description" content="神奈川県西丹沢の川で過ごす、Playful Water Walkingの季節のツアー一覧。">
+<meta property="og:image" content="https://hitotowa.info/playfulwaterwalking/images/web/springfall-ogp.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f6f3ec;
+    --paper:#fffdf8;
+    --ink:#2b2f2a;
+    --muted:#6b7068;
+    --line:#dcd6c8;
+    --moss:#4f6b4a;
+    --moss-deep:#33462f;
+    --water:#5b8a8c;
+    --leaf:#c0763a;
+    --serif:"Noto Serif JP", serif;
+    --sans:"Noto Sans JP", system-ui, sans-serif;
+    --latin:"Cormorant Garamond", "Noto Serif JP", serif;
+    --peek:40px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.9;letter-spacing:.04em;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+
+  .site-header{padding:16px 20px}
+  .logo{font-family:var(--latin);font-size:1.25rem;letter-spacing:.06em;text-decoration:none}
+
+  .intro{text-align:center;padding:40px 20px 24px}
+  .eyebrow{font-family:var(--latin);font-style:italic;font-size:1.05rem;color:var(--water);letter-spacing:.08em;display:block;margin-bottom:6px}
+  .intro h1{font-family:var(--serif);font-weight:500;font-size:clamp(1.5rem,4vw,2rem);letter-spacing:.14em}
+  .intro p{margin-top:14px;color:var(--muted);font-size:.95rem}
+
+  /* ---------- season nav ---------- */
+  .season-nav{display:flex;justify-content:center;gap:8px;padding:8px 0}
+  .season-nav button{font:inherit;font-size:.85rem;letter-spacing:.12em;padding:6px 18px;border-radius:999px;border:1px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+  .season-nav button[aria-current="true"]{background:var(--moss);border-color:var(--moss);color:#fff}
+
+  /* ---------- season card ---------- */
+  .season{position:relative;overflow:hidden;border-radius:18px;color:#fff;background:#3d4a3b;display:flex;flex-direction:column;box-shadow:0 24px 50px -24px rgba(30,40,30,.55)}
+  .season-media{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .season::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,28,20,.35) 0%,rgba(20,28,20,.05) 30%,rgba(20,28,20,.15) 55%,rgba(20,28,20,.7) 100%);pointer-events:none}
+  .season[data-season="winter"]{background:linear-gradient(160deg,#e3e9ed 0%,#b8c6cf 55%,#8a9eab 100%)}
+  .season-bar,.season-body{position:relative;z-index:1}
+  .season-bar{height:var(--peek);flex:0 0 var(--peek);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 18px;background:rgba(15,22,15,.28);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);font-size:.82rem;letter-spacing:.14em}
+  .season-bar .bar-name{font-family:var(--latin);font-size:1.05rem;letter-spacing:.1em}
+  .badge{font-size:.72rem;letter-spacing:.12em;padding:2px 12px;border-radius:999px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.55);white-space:nowrap}
+  .season.is-featured .badge-featured{display:inline-block}
+  .badge-featured{display:none;background:var(--leaf);border-color:var(--leaf)}
+  .season-body{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:20px;padding:24px clamp(18px,4vw,36px) clamp(20px,4vw,34px)}
+  .season-title{font-family:var(--latin);font-style:italic;font-weight:500;font-size:clamp(2.2rem,8vw,4rem);line-height:1.05;letter-spacing:.02em;text-shadow:0 2px 18px rgba(0,0,0,.25)}
+  .season-title small{display:block;font-family:var(--serif);font-style:normal;font-size:clamp(1rem,3.4vw,1.3rem);letter-spacing:.3em;margin-top:10px}
+
+  /* tours inside a season (scrolls sideways when there are several) */
+  .tour-list{display:flex;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:4px;scrollbar-width:none}
+  .tour-list::-webkit-scrollbar{display:none}
+  .tour{flex:0 0 min(100%,400px);scroll-snap-align:start;display:block;text-decoration:none;color:var(--ink);background:rgba(255,253,248,.94);border-radius:12px;padding:18px 20px;transition:transform .2s,background .2s}
+  .tour:hover{transform:translateY(-2px);background:#fff}
+  .tour-name{font-family:var(--serif);font-weight:500;font-size:1.05rem;letter-spacing:.08em}
+  .tour-name span{display:inline-block}
+  .tour-catch{font-size:.88rem;color:var(--muted);margin-top:4px;line-height:1.7}
+  .tour-more{display:inline-block;margin-top:10px;font-size:.85rem;font-weight:500;letter-spacing:.1em;color:var(--moss)}
+  .coming{background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.5);border-radius:12px;padding:16px 20px;max-width:400px;font-size:.92rem;letter-spacing:.1em}
+
+  /* ---------- default layout: a simple vertical list ---------- */
+  .deck-cards{display:flex;flex-direction:column;gap:24px;width:min(92vw,900px);margin:16px auto 0}
+  .season{min-height:min(70vh,560px)}
+
+  /* ---------- stacked-deck layout (enabled by JS) ---------- */
+  .deck-on .deck{height:calc(var(--n,3) * 100vh)}
+  .deck-on .deck-stage{position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
+  .deck-on .season-nav{position:relative;z-index:2;background:var(--bg)}
+  .deck-on .deck-cards{display:block;position:relative;z-index:1;flex:1;width:100%;margin:0;perspective:1400px}
+  .deck-on .season{position:absolute;left:0;right:0;margin:0 auto;top:calc(var(--peek) * 2 + 10px);width:min(92vw,900px);height:min(calc(100% - var(--peek) * 2 - 28px),660px);min-height:0;transform-origin:50% 0;will-change:transform,opacity}
+
+  footer{padding:40px 0 32px;text-align:center;font-size:.8rem;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="logo" href="/tours/">Playful Water Walking</a>
+</header>
+
+<div class="intro">
+  <span class="eyebrow">Tours</span>
+  <h1>ツアー一覧</h1>
+  <p>西丹沢の川で過ごす、季節ごとの1DAYツアー</p>
+</div>
+
+<!-- data-featured の値（springfall / summer / winter）を変えると、一番手前に出る季節が切り替わる -->
+<section class="deck" id="deck" data-featured="springfall">
+  <div class="deck-stage">
+    <nav class="season-nav" id="seasonNav" aria-label="季節を選ぶ"></nav>
+    <div class="deck-cards">
+
+      <article class="season" data-season="springfall" data-label="春・秋">
+        <img class="season-media" src="../playfulwaterwalking/images/web/springfall-sawaruki.jpg" alt="ヘルメットをかぶって沢を歩く参加者">
+        <div class="season-bar"><span class="bar-name">Spring &amp; Autumn</span><span class="badge badge-featured">今おすすめ</span></div>
+        <div class="season-body">
+          <h2 class="season-title">Spring &amp; Autumn<small>春・秋</small></h2>
+          <div class="tour-list">
+            <a class="tour" href="/playfulwaterwalking/springfall/">
+              <p class="tour-name">Playful Water Walking<span>［春・秋］</span></p>
+              <p class="tour-catch">沢を歩く 滝に出会う<br>神奈川県西丹沢の美しい渓流で過ごす、1DAY沢歩きツアー</p>
+              <span class="tour-more">詳しく見る →</span>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <article class="season" data-season="summer" data-label="夏">
+        <img class="season-media" src="../playfulwaterwalking/images/web/overview-bottom.jpg" alt="エメラルド色の滝つぼ">
+        <div class="season-bar"><span class="bar-name">Summer</span><span class="badge badge-featured">今おすすめ</span></div>
+        <div class="season-body">
+          <h2 class="season-title">Summer<small>夏</small></h2>
+          <div class="tour-list">
+            <a class="tour" href="/playfulwaterwalking/summer/">
+              <p class="tour-name">Playful Water Walking<span>［夏］</span></p>
+              <p class="tour-catch">西丹沢の美渓で過ごす、1DAY川遊びリトリート</p>
+              <span class="tour-more">詳しく見る →</span>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <article class="season" data-season="winter" data-label="冬">
+        <div class="season-bar"><span class="bar-name">Winter</span><span class="badge">準備中</span></div>
+        <div class="season-body">
+          <h2 class="season-title">Winter<small>冬</small></h2>
+          <p class="coming">冬のツアーは、ただいま準備中です。</p>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<footer>© hitotowa / Playful Water Walking</footer>
+
+<script>
+  (function () {
+    var deck = document.getElementById('deck');
+    var cardsBox = deck.querySelector('.deck-cards');
+    var nav = document.getElementById('seasonNav');
+
+    // Bring the featured season to the front.
+    var featured = cardsBox.querySelector('.season[data-season="' + deck.dataset.featured + '"]');
+    if (featured) {
+      featured.classList.add('is-featured');
+      cardsBox.insertBefore(featured, cardsBox.firstChild);
+    }
+    var cards = Array.prototype.slice.call(cardsBox.querySelectorAll('.season'));
+    var n = cards.length;
+
+    var buttons = cards.map(function (card, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = card.dataset.label;
+      b.addEventListener('click', function () { goTo(i); });
+      nav.appendChild(b);
+      return b;
+    });
+    function setCurrent(i) {
+      buttons.forEach(function (b, j) { b.setAttribute('aria-current', j === i ? 'true' : 'false'); });
+    }
+    setCurrent(0);
+
+    function goTo(i) {
+      if (reduceMotion) {
+        cards[i].scrollIntoView({ block: 'start' });
+        setCurrent(i);
+        return;
+      }
+      var top = deck.getBoundingClientRect().top + window.pageYOffset;
+      window.scrollTo({ top: top + i * window.innerHeight, behavior: 'smooth' });
+    }
+
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) return;
+
+    document.documentElement.classList.add('deck-on');
+    deck.style.setProperty('--n', n);
+    var peek = 40;
+
+    // 0 = first card in front, n-1 = last card in front.
+    function progress() {
+      var top = deck.getBoundingClientRect().top;
+      return Math.min(Math.max(-top / window.innerHeight, 0), n - 1);
+    }
+
+    function render() {
+      ticking = false;
+      var p = progress();
+      cards.forEach(function (card, i) {
+        var d = i - p; // > 0: waiting behind, < 0: already flipped away
+        var y, scale, opacity, bright, tilt = 0;
+        if (d >= 0) {
+          var depth = Math.min(d, 2);
+          y = -depth * peek;
+          scale = 1 - depth * 0.05;
+          opacity = d > 2.5 ? 0 : 1;
+          bright = 1 - depth * 0.2;
+        } else {
+          var t = Math.min(-d, 1);
+          y = -t * window.innerHeight * 0.95;
+          scale = 1;
+          opacity = Math.max(0, 1 - t * 1.8);
+          bright = 1;
+          tilt = t * 10;
+        }
+        card.style.transform = 'translateY(' + y + 'px) rotateX(' + tilt + 'deg) scale(' + scale + ')';
+        card.style.opacity = opacity;
+        card.style.filter = 'brightness(' + bright + ')';
+        card.style.zIndex = 100 - i;
+        card.style.pointerEvents = Math.abs(d) < 0.5 ? 'auto' : 'none';
+      });
+      setCurrent(Math.round(p));
+    }
+
+    var ticking = false;
+    window.addEventListener('scroll', function () {
+      if (!ticking) { ticking = true; requestAnimationFrame(render); }
+    }, { passive: true });
+    window.addEventListener('resize', render);
+    render();
+  })();
+</script>
+</body>
+</html>
