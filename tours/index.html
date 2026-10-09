@@ -212,7 +212,7 @@
         return;
       }
       var top = deck.getBoundingClientRect().top + window.pageYOffset;
-      window.scrollTo({ top: top + i * window.innerHeight, behavior: 'smooth' });
+      window.scrollTo({ top: top + i * segment(), behavior: 'smooth' });
     }
 
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -223,9 +223,11 @@
     var peek = 40;
 
     // 0 = first card in front, n-1 = last card in front.
+    function segment() { return deck.offsetHeight / n; }
+
     function progress() {
       var top = deck.getBoundingClientRect().top;
-      return Math.min(Math.max(-top / window.innerHeight, 0), n - 1);
+      return Math.min(Math.max(-top / segment(), 0), n - 1);
     }
 
     function render() {
@@ -257,9 +259,28 @@
       setCurrent(Math.round(p));
     }
 
+    // When scrolling stops between two cards, finish the flip in the direction the user was going.
+    var lastY = window.pageYOffset, direction = 0, touching = false, settleTimer;
+    function settle() {
+      if (touching) return;
+      var raw = -deck.getBoundingClientRect().top / segment();
+      if (raw <= 0 || raw >= n - 1) return;
+      var base = Math.floor(raw), frac = raw - base;
+      if (frac < 0.02 || frac > 0.98) return;
+      var target = direction >= 0 ? (frac > 0.15 ? base + 1 : base) : (frac < 0.85 ? base : base + 1);
+      goTo(target);
+    }
+    window.addEventListener('touchstart', function () { touching = true; clearTimeout(settleTimer); }, { passive: true });
+    window.addEventListener('touchend', function () { touching = false; clearTimeout(settleTimer); settleTimer = setTimeout(settle, 150); }, { passive: true });
+
     var ticking = false;
     window.addEventListener('scroll', function () {
       if (!ticking) { ticking = true; requestAnimationFrame(render); }
+      var y = window.pageYOffset;
+      if (y !== lastY) direction = y > lastY ? 1 : -1;
+      lastY = y;
+      clearTimeout(settleTimer);
+      settleTimer = setTimeout(settle, 150);
     }, { passive: true });
     window.addEventListener('resize', render);
     render();
