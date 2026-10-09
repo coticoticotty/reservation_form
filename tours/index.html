@@ -109,7 +109,7 @@
   .deck-on .deck-cards{display:block;position:relative;height:100%;width:100%;margin:0;perspective:1400px;touch-action:pan-y;-webkit-user-select:none;user-select:none}
   .deck-on .season{position:absolute;left:0;right:0;margin:0 auto;top:calc(var(--peek) * 2);width:min(92vw,900px);height:calc(100% - var(--peek) * 2);min-height:0;transform-origin:50% 0;transition:transform .55s cubic-bezier(.2,.75,.2,1),opacity .45s,filter .45s;will-change:transform}
   .deck-on .season img{-webkit-user-drag:none}
-  .deck-on .season.dragging{transition:none}
+  .deck-on .season.dragging,.deck-on .season.instant{transition:none}
   /* one gentle sideways wiggle when the deck first comes into view, hinting that it can be swiped */
   .deck-on .season.nudge{animation:nudge 1.3s ease-in-out .2s 1}
   @keyframes nudge{0%,100%{transform:none}35%{transform:translateX(-44px) rotate(-1.5deg)}65%{transform:translateX(10px)}}
@@ -241,40 +241,79 @@
       return dot;
     });
 
-    // d < 0: already swiped away to the left, d = 0: in front, d > 0: waiting behind
+    // Seasons loop: the card leaving the front slides out to the left and then rejoins at the back of the pile.
+    // d = how far behind the front a card sits (0 = front).
     function render(dragX) {
       cards.forEach(function (card, i) {
-        var d = i - current, transform;
-        if (d < 0) {
+        var d = (i - current + n) % n, transform, opacity, bright;
+        if (card.classList.contains('out-left')) {
           transform = 'translate3d(-118%,0,0) rotate(-6deg)';
-          card.style.opacity = 0;
-          card.style.filter = 'none';
+          opacity = 0;
+          bright = 1;
         } else {
           var depth = Math.min(d, 2);
           transform = 'translate3d(0,' + (-depth * peek) + 'px,0) scale(' + (1 - depth * 0.05) + ')';
-          card.style.opacity = d > 2 ? 0 : 1;
-          card.style.filter = 'brightness(' + (1 - depth * 0.2) + ')';
+          opacity = (d > 2 || card.classList.contains('arriving')) ? 0 : 1;
+          bright = 1 - depth * 0.2;
         }
         if (d === 0 && dragX) transform = 'translate3d(' + dragX + 'px,0,0) rotate(' + (dragX * 0.02) + 'deg)';
         card.style.transform = transform;
-        card.style.zIndex = 100 - i;
+        card.style.opacity = opacity;
+        card.style.filter = 'brightness(' + bright + ')';
+        card.style.zIndex = card.classList.contains('out-left') ? 101 : 100 - d;
         card.inert = d !== 0;
       });
       buttons.forEach(function (b, j) { b.setAttribute('aria-current', j === current ? 'true' : 'false'); });
       dots.forEach(function (dot, j) { dot.classList.toggle('on', j === current); });
-      prevBtn.disabled = current === 0;
-      nextBtn.disabled = current === n - 1;
     }
 
-    function goTo(i) {
-      current = Math.max(0, Math.min(n - 1, i));
+    function next() {
+      var leaving = cards[current];
+      clearTimeout(leaving.loopTimer);
+      leaving.classList.remove('arriving', 'instant');
+      current = (current + 1) % n;
+      leaving.classList.add('out-left');
       render();
+      // once it is off screen, drop it silently at the back of the pile and fade it in there
+      leaving.loopTimer = setTimeout(function () {
+        leaving.classList.remove('out-left');
+        leaving.classList.add('instant', 'arriving');
+        render();
+        void leaving.offsetWidth;
+        leaving.classList.remove('instant');
+        requestAnimationFrame(function () { leaving.classList.remove('arriving'); render(); });
+      }, 450);
     }
-    prevBtn.addEventListener('click', function () { goTo(current - 1); });
-    nextBtn.addEventListener('click', function () { goTo(current + 1); });
+
+    function prev() {
+      current = (current - 1 + n) % n;
+      var entering = cards[current];
+      clearTimeout(entering.loopTimer);
+      entering.classList.remove('arriving');
+      // jump it out to the left without animating, then slide it in to the front
+      entering.classList.add('instant', 'out-left');
+      render();
+      void entering.offsetWidth;
+      entering.classList.remove('instant');
+      requestAnimationFrame(function () { entering.classList.remove('out-left'); render(); });
+    }
+
+    // Jump to a season by going round the shorter way, one card at a time.
+    function goTo(i) {
+      var forward = (i - current + n) % n;
+      if (!forward) return;
+      var step = forward <= n / 2 ? next : prev;
+      var count = forward <= n / 2 ? forward : n - forward;
+      (function run() {
+        step();
+        if (--count > 0) setTimeout(run, 200);
+      })();
+    }
+    prevBtn.addEventListener('click', prev);
+    nextBtn.addEventListener('click', next);
     deck.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowLeft') goTo(current - 1);
-      if (e.key === 'ArrowRight') goTo(current + 1);
+      if (e.key === 'ArrowLeft') prev();
+      if (e.key === 'ArrowRight') next();
     });
 
     // Swipe (touch) or drag (mouse) the front card sideways. Vertical movement is left to normal page scrolling.
@@ -295,8 +334,7 @@
         cards[current].classList.remove('nudge');
         cards[current].classList.add('dragging');
       }
-      var pastEnd = (mx > 0 && current === 0) || (mx < 0 && current === n - 1);
-      dx = pastEnd ? mx * 0.25 : mx;
+      dx = mx;
       render(dx);
     });
     function endDrag() {
@@ -307,8 +345,8 @@
       justDragged = true;
       setTimeout(function () { justDragged = false; }, 0);
       cards[current].classList.remove('dragging');
-      if (dx < -60) goTo(current + 1);
-      else if (dx > 60) goTo(current - 1);
+      if (dx < -60) next();
+      else if (dx > 60) prev();
       else render();
     }
     cardsBox.addEventListener('pointerup', endDrag);
