@@ -75,7 +75,7 @@
 
   /* tours inside a season: stacked rows on phones, side by side on wider screens */
   .tour-list{display:flex;flex-direction:column;gap:10px}
-  @media (min-width:720px){.tour-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}}
+  @media (min-width:720px){.tour-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,380px));gap:14px}}
   .tour{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--ink);background:rgba(255,253,248,.6);backdrop-filter:blur(12px) saturate(1.2);-webkit-backdrop-filter:blur(12px) saturate(1.2);border-radius:12px;padding:14px 16px 14px 18px;transition:transform .2s,background .2s}
   .tour:hover{transform:translateY(-2px);background:rgba(255,253,248,.9)}
   /* without blur support, a see-through row would hurt readability, so stay opaque */
@@ -97,16 +97,36 @@
   }
   .coming{background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.5);border-radius:12px;padding:16px 20px;max-width:400px;font-size:.92rem;letter-spacing:.1em}
 
-  /* ---------- default layout: a simple vertical list ---------- */
+  /* ---------- default layout (no JS): a simple vertical list ---------- */
   .deck-cards{display:flex;flex-direction:column;gap:24px;width:min(92vw,900px);margin:16px auto 0}
   .season{min-height:min(70vh,560px)}
+  .deck-arrow,.deck-pager{display:none}
 
-  /* ---------- stacked-deck layout (enabled by JS) ---------- */
-  .deck-on .deck{height:calc(var(--n,3) * 100vh)}
-  .deck-on .deck-stage{position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
-  .deck-on .season-nav{position:relative;z-index:2;background:var(--bg)}
-  .deck-on .deck-cards{display:block;position:relative;z-index:1;flex:1;width:100%;margin:0;perspective:1400px}
-  .deck-on .season{position:absolute;left:0;right:0;margin:0 auto;top:calc(var(--peek) * 2 + 10px);width:min(92vw,900px);height:min(calc(100% - var(--peek) * 2 - 28px),660px);min-height:0;transform-origin:50% 0;will-change:transform,opacity}
+  /* ---------- swipeable deck (enabled by JS) ---------- */
+  /* a card dragged past the right edge must not widen the page (mobile browsers re-fit and jump to the top) */
+  .deck-on .deck{overflow-x:hidden;overflow-x:clip}
+  .deck-on .deck-viewport{position:relative;height:clamp(560px,80svh,740px);margin-top:4px}
+  .deck-on .deck-cards{display:block;position:relative;height:100%;width:100%;margin:0;perspective:1400px;touch-action:pan-y;-webkit-user-select:none;user-select:none}
+  .deck-on .season{position:absolute;left:0;right:0;margin:0 auto;top:calc(var(--peek) * 2);width:min(92vw,900px);height:calc(100% - var(--peek) * 2);min-height:0;transform-origin:50% 0;transition:transform .55s cubic-bezier(.2,.75,.2,1),opacity .45s,filter .45s;will-change:transform}
+  .deck-on .season img{-webkit-user-drag:none}
+  .deck-on .season.dragging{transition:none}
+  /* one gentle sideways wiggle when the deck first comes into view, hinting that it can be swiped */
+  .deck-on .season.nudge{animation:nudge 1.3s ease-in-out .2s 1}
+  @keyframes nudge{0%,100%{transform:none}35%{transform:translateX(-44px) rotate(-1.5deg)}65%{transform:translateX(10px)}}
+
+  .deck-on .deck-arrow{display:grid;place-items:center;position:absolute;top:calc(50% + var(--peek));transform:translateY(-50%);z-index:200;width:44px;height:44px;border-radius:50%;border:none;background:rgba(255,253,248,.92);color:var(--moss-deep);font-size:1.6rem;line-height:1;padding-bottom:3px;cursor:pointer;box-shadow:0 6px 18px -6px rgba(30,40,30,.45);transition:opacity .25s,transform .2s}
+  .deck-on .deck-arrow:hover{transform:translateY(-50%) scale(1.06)}
+  .deck-on .deck-arrow:disabled{opacity:0;pointer-events:none}
+  .deck-on .deck-arrow.prev{left:max(8px,calc(50% - 514px))}
+  .deck-on .deck-arrow.next{right:max(8px,calc(50% - 514px))}
+
+  .deck-on .deck-pager{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:18px}
+  .dots{display:flex;gap:8px}
+  .dots span{width:8px;height:8px;border-radius:999px;background:var(--line);transition:width .3s,background .3s}
+  .dots span.on{width:24px;background:var(--moss)}
+  .swipe-hint{display:none;font-size:.78rem;color:var(--muted);letter-spacing:.12em}
+  @media (hover:none){.swipe-hint{display:block}}
+  @media (prefers-reduced-motion:reduce){.deck-on .season{transition:none}}
 
   footer{padding:40px 0 32px;text-align:center;font-size:.8rem;color:var(--muted)}
 </style>
@@ -125,8 +145,9 @@
 
 <!-- data-featured の値（springfall / summer / winter）を変えると、一番手前に出る季節が切り替わる -->
 <section class="deck" id="deck" data-featured="springfall">
-  <div class="deck-stage">
-    <nav class="season-nav" id="seasonNav" aria-label="季節を選ぶ"></nav>
+  <nav class="season-nav" id="seasonNav" aria-label="季節を選ぶ"></nav>
+  <div class="deck-viewport">
+    <button type="button" class="deck-arrow prev" id="deckPrev" aria-label="前の季節へ">‹</button>
     <div class="deck-cards">
 
       <article class="season" data-season="springfall" data-label="春・秋">
@@ -172,6 +193,11 @@
       </article>
 
     </div>
+    <button type="button" class="deck-arrow next" id="deckNext" aria-label="次の季節へ">›</button>
+  </div>
+  <div class="deck-pager">
+    <div class="dots" id="deckDots" aria-hidden="true"></div>
+    <p class="swipe-hint">← スワイプで季節を切り替え →</p>
   </div>
 </section>
 
@@ -182,6 +208,11 @@
     var deck = document.getElementById('deck');
     var cardsBox = deck.querySelector('.deck-cards');
     var nav = document.getElementById('seasonNav');
+    var prevBtn = document.getElementById('deckPrev');
+    var nextBtn = document.getElementById('deckNext');
+    var dotsBox = document.getElementById('deckDots');
+    var peek = 40;
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     // Bring the featured season to the front.
     var featured = cardsBox.querySelector('.season[data-season="' + deck.dataset.featured + '"]');
@@ -191,6 +222,10 @@
     }
     var cards = Array.prototype.slice.call(cardsBox.querySelectorAll('.season'));
     var n = cards.length;
+    var current = 0;
+
+    document.documentElement.classList.add('deck-on');
+    cardsBox.querySelectorAll('img, a').forEach(function (el) { el.draggable = false; });
 
     var buttons = cards.map(function (card, i) {
       var b = document.createElement('button');
@@ -200,90 +235,102 @@
       nav.appendChild(b);
       return b;
     });
-    function setCurrent(i) {
-      buttons.forEach(function (b, j) { b.setAttribute('aria-current', j === i ? 'true' : 'false'); });
+    var dots = cards.map(function () {
+      var dot = document.createElement('span');
+      dotsBox.appendChild(dot);
+      return dot;
+    });
+
+    // d < 0: already swiped away to the left, d = 0: in front, d > 0: waiting behind
+    function render(dragX) {
+      cards.forEach(function (card, i) {
+        var d = i - current, transform;
+        if (d < 0) {
+          transform = 'translate3d(-118%,0,0) rotate(-6deg)';
+          card.style.opacity = 0;
+          card.style.filter = 'none';
+        } else {
+          var depth = Math.min(d, 2);
+          transform = 'translate3d(0,' + (-depth * peek) + 'px,0) scale(' + (1 - depth * 0.05) + ')';
+          card.style.opacity = d > 2 ? 0 : 1;
+          card.style.filter = 'brightness(' + (1 - depth * 0.2) + ')';
+        }
+        if (d === 0 && dragX) transform = 'translate3d(' + dragX + 'px,0,0) rotate(' + (dragX * 0.02) + 'deg)';
+        card.style.transform = transform;
+        card.style.zIndex = 100 - i;
+        card.inert = d !== 0;
+      });
+      buttons.forEach(function (b, j) { b.setAttribute('aria-current', j === current ? 'true' : 'false'); });
+      dots.forEach(function (dot, j) { dot.classList.toggle('on', j === current); });
+      prevBtn.disabled = current === 0;
+      nextBtn.disabled = current === n - 1;
     }
-    setCurrent(0);
 
     function goTo(i) {
-      if (reduceMotion) {
-        cards[i].scrollIntoView({ block: 'start' });
-        setCurrent(i);
-        return;
+      current = Math.max(0, Math.min(n - 1, i));
+      render();
+    }
+    prevBtn.addEventListener('click', function () { goTo(current - 1); });
+    nextBtn.addEventListener('click', function () { goTo(current + 1); });
+    deck.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') goTo(current - 1);
+      if (e.key === 'ArrowRight') goTo(current + 1);
+    });
+
+    // Swipe (touch) or drag (mouse) the front card sideways. Vertical movement is left to normal page scrolling.
+    var startX = 0, startY = 0, dx = 0, tracking = false, dragging = false, justDragged = false;
+    cardsBox.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      tracking = true; dragging = false; dx = 0;
+      startX = e.clientX; startY = e.clientY;
+    });
+    cardsBox.addEventListener('pointermove', function (e) {
+      if (!tracking) return;
+      var mx = e.clientX - startX, my = e.clientY - startY;
+      if (!dragging) {
+        if (Math.abs(my) > 10 && Math.abs(my) > Math.abs(mx)) { tracking = false; return; }
+        if (Math.abs(mx) < 8) return;
+        dragging = true;
+        cardsBox.setPointerCapture(e.pointerId);
+        cards[current].classList.remove('nudge');
+        cards[current].classList.add('dragging');
       }
-      var top = deck.getBoundingClientRect().top + window.pageYOffset;
-      window.scrollTo({ top: top + i * segment(), behavior: 'smooth' });
+      var pastEnd = (mx > 0 && current === 0) || (mx < 0 && current === n - 1);
+      dx = pastEnd ? mx * 0.25 : mx;
+      render(dx);
+    });
+    function endDrag() {
+      if (!tracking) return;
+      tracking = false;
+      if (!dragging) return;
+      dragging = false;
+      justDragged = true;
+      setTimeout(function () { justDragged = false; }, 0);
+      cards[current].classList.remove('dragging');
+      if (dx < -60) goTo(current + 1);
+      else if (dx > 60) goTo(current - 1);
+      else render();
     }
+    cardsBox.addEventListener('pointerup', endDrag);
+    cardsBox.addEventListener('pointercancel', endDrag);
+    // A drag that ends on a tour link shouldn't open it.
+    cardsBox.addEventListener('click', function (e) {
+      if (justDragged) { e.preventDefault(); e.stopPropagation(); }
+    }, true);
 
-    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduceMotion) return;
-
-    document.documentElement.classList.add('deck-on');
-    deck.style.setProperty('--n', n);
-    var peek = 40;
-
-    // 0 = first card in front, n-1 = last card in front.
-    function segment() { return deck.offsetHeight / n; }
-
-    function progress() {
-      var top = deck.getBoundingClientRect().top;
-      return Math.min(Math.max(-top / segment(), 0), n - 1);
-    }
-
-    function render() {
-      ticking = false;
-      var p = progress();
-      cards.forEach(function (card, i) {
-        var d = i - p; // > 0: waiting behind, < 0: already flipped away
-        var y, scale, opacity, bright, tilt = 0;
-        if (d >= 0) {
-          var depth = Math.min(d, 2);
-          y = -depth * peek;
-          scale = 1 - depth * 0.05;
-          opacity = d > 2.5 ? 0 : 1;
-          bright = 1 - depth * 0.2;
-        } else {
-          var t = Math.min(-d, 1);
-          y = -t * window.innerHeight * 0.95;
-          scale = 1;
-          opacity = Math.max(0, 1 - t * 1.8);
-          bright = 1;
-          tilt = t * 10;
-        }
-        card.style.transform = 'translateY(' + y + 'px) rotateX(' + tilt + 'deg) scale(' + scale + ')';
-        card.style.opacity = opacity;
-        card.style.filter = 'brightness(' + bright + ')';
-        card.style.zIndex = 100 - i;
-        card.style.pointerEvents = Math.abs(d) < 0.5 ? 'auto' : 'none';
-      });
-      setCurrent(Math.round(p));
-    }
-
-    // When scrolling stops between two cards, finish the flip in the direction the user was going.
-    var lastY = window.pageYOffset, direction = 0, touching = false, settleTimer;
-    function settle() {
-      if (touching) return;
-      var raw = -deck.getBoundingClientRect().top / segment();
-      if (raw <= 0 || raw >= n - 1) return;
-      var base = Math.floor(raw), frac = raw - base;
-      if (frac < 0.02 || frac > 0.98) return;
-      var target = direction >= 0 ? (frac > 0.15 ? base + 1 : base) : (frac < 0.85 ? base : base + 1);
-      goTo(target);
-    }
-    window.addEventListener('touchstart', function () { touching = true; clearTimeout(settleTimer); }, { passive: true });
-    window.addEventListener('touchend', function () { touching = false; clearTimeout(settleTimer); settleTimer = setTimeout(settle, 150); }, { passive: true });
-
-    var ticking = false;
-    window.addEventListener('scroll', function () {
-      if (!ticking) { ticking = true; requestAnimationFrame(render); }
-      var y = window.pageYOffset;
-      if (y !== lastY) direction = y > lastY ? 1 : -1;
-      lastY = y;
-      clearTimeout(settleTimer);
-      settleTimer = setTimeout(settle, 150);
-    }, { passive: true });
-    window.addEventListener('resize', render);
     render();
+
+    if (!reduceMotion && n > 1 && 'IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        if (!entries[0].isIntersecting) return;
+        io.disconnect();
+        if (current !== 0 || dragging) return;
+        var front = cards[0];
+        front.classList.add('nudge');
+        front.addEventListener('animationend', function () { front.classList.remove('nudge'); }, { once: true });
+      }, { threshold: 0.6 });
+      io.observe(cardsBox);
+    }
   })();
 </script>
 </body>
